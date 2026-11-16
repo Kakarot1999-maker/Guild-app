@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Guilds - النظام الأسطوري للتحالفات</title>
+    <title>Guilds - نظام التحالفات والرتب الأسطورية</title>
     <style>
         :root {
-            --bg-main: #121212;
-            --bg-panel: #1e1e1e;
-            --bg-sec: #252525;
-            --bg-input: #2d2d2d;
-            --bg-chat: #0a0a0a;
+            --bg-main: #111b21;
+            --bg-panel: #202c33;
+            --bg-sec: #182229;
+            --bg-input: #2a3942;
+            --bg-chat: #0b141a;
             --bg-my-msg: #005c4b;
-            --text-main: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --border-color: #333333;
-            --input-border: #444444;
-            --accent: #ffb703; /* لون أصفر ملكي فخم للأنيمي */
-            --accent-green: #00a884;
+            --text-main: #e9edef;
+            --text-muted: #8696a0;
+            --border-color: #222d34;
+            --input-border: #3d4a52;
+            --accent: #00a884;
             --danger: #f15c6d;
-            --online-color: #25d366;
         }
 
         body.light-theme {
@@ -33,10 +31,8 @@
             --text-muted: #54656f;
             --border-color: #e9edef;
             --input-border: #d1d7db;
-            --accent: #d4a373;
-            --accent-green: #00a884;
+            --accent: #00a884;
             --danger: #ea0038;
-            --online-color: #008069;
         }
 
         body, html { 
@@ -47,6 +43,7 @@
             padding: 0;
             height: 100%;
             overflow: hidden;
+            transition: background 0.2s, color 0.2s;
         }
         .app-container {
             width: 100%;
@@ -83,7 +80,7 @@
             width: 100%;
             padding: 12px;
             background: var(--accent);
-            color: #121212;
+            color: white;
             border: none;
             border-radius: 8px;
             font-weight: bold;
@@ -104,7 +101,7 @@
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.75);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -119,7 +116,7 @@
             max-height: 85vh;
             overflow-y: auto;
             box-sizing: border-box;
-            border: 1px solid var(--accent);
+            border: 1px solid var(--border-color);
         }
         .modal-content input, .modal-content textarea, .modal-content select {
             width: 100%;
@@ -142,72 +139,21 @@
             border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
         }
-        .chat-header h3 { margin: 0; font-size: 16px; color: var(--accent); font-weight: bold; }
+        .chat-header h3 { margin: 0; font-size: 15px; color: var(--text-main); }
         .header-actions { display: flex; gap: 8px; align-items: center; }
-        .btn-icon { background: none; border: none; color: var(--accent); font-size: 18px; cursor: pointer; font-weight: bold; padding: 4px; }
+        .btn-icon { background: none; border: none; color: var(--accent); font-size: 18px; cursor: pointer; font-weight: bold; padding: 4px; position: relative; }
         
-        /* شريط التبويبات العلوي (Tabs) زي الصورة */
-        .top-tabs {
-            display: flex;
-            background: var(--bg-sec);
-            padding: 0 10px;
-            border-bottom: 1px solid var(--border-color);
-            overflow-x: auto;
-            flex-shrink: 0;
-        }
-        .tab-item {
-            padding: 10px 15px;
-            font-size: 13px;
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            border-bottom: 2px solid transparent;
-        }
-        .tab-item.active {
-            color: var(--accent);
-            border-bottom: 2px solid var(--accent);
-            font-weight: bold;
-        }
-
-        /* كارت البروفايل العلوي زي الصورة */
-        .profile-banner {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            background: var(--bg-sec);
-            margin: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-        .avatar-container {
-            position: relative;
-            margin-left: 12px;
-            flex-shrink: 0;
-        }
-        .avatar {
-            width: 50px;
-            height: 50px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            color: #121212;
-            overflow: hidden;
-            object-fit: cover;
-        }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .online-dot {
+        .badge-dot {
             position: absolute;
-            bottom: 2px;
-            left: 2px;
-            width: 11px;
-            height: 11px;
-            background-color: var(--online-color);
-            border: 2px solid var(--bg-panel);
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
             border-radius: 50%;
+            font-weight: bold;
+            display: none;
         }
 
         .search-bar {
@@ -230,56 +176,61 @@
             flex: 1;
             overflow-y: auto;
             background: var(--bg-main);
-            padding-bottom: 10px;
-        }
-        .chat-section-title {
-            font-size: 13px;
-            color: var(--accent);
-            padding: 10px 15px 5px 15px;
-            font-weight: bold;
         }
         .chat-item {
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            background: var(--bg-panel);
-            margin: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             cursor: pointer;
-            position: relative;
         }
         .chat-item:hover { background: var(--bg-sec); }
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            margin-left: 15px;
+            overflow: hidden;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .chat-info { flex: 1; min-width: 0; }
-        .chat-name { font-weight: bold; font-size: 14px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-name { font-weight: bold; font-size: 15px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .chat-last-msg { font-size: 12px; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* شريط التنقل السفلي زي الصورة (Bottom Navigation Bar) */
-        .bottom-nav {
+        /* شريط التنقل السفلي الجديد */
+        .bottom-nav-bar {
             display: flex;
             background: var(--bg-panel);
             border-top: 1px solid var(--border-color);
-            height: 55px;
-            justify-content: space-around;
-            align-items: center;
             flex-shrink: 0;
         }
-        .nav-item {
+        .nav-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: var(--text-muted);
-            font-size: 10px;
-            cursor: pointer;
-            flex: 1;
+            gap: 2px;
         }
-        .nav-item.active {
+        .nav-btn.active, .nav-btn:hover {
             color: var(--accent);
-            font-weight: bold;
-        }
-        .nav-item span.icon {
-            font-size: 18px;
-            margin-bottom: 2px;
+            background: var(--bg-sec);
         }
 
         .app-footer {
@@ -287,13 +238,13 @@
             padding: 6px;
             text-align: center;
             border-top: 1px solid var(--border-color);
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-muted);
             flex-shrink: 0;
         }
         .app-footer span { color: var(--accent); font-weight: bold; }
 
-        .requests-section, .admin-panel-section {
+        .requests-section, .admin-panel-section, .activity-log-section {
             background: var(--bg-sec);
             border-bottom: 1px solid var(--border-color);
             padding: 10px 15px;
@@ -301,7 +252,7 @@
             max-height: 220px;
             overflow-y: auto;
         }
-        .requests-section h4, .admin-panel-section h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--accent); }
+        .requests-section h4, .admin-panel-section h4, .activity-log-section h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--accent); }
         .request-card {
             display: flex;
             justify-content: space-between;
@@ -322,7 +273,7 @@
             font-size: 12px;
             margin-right: 4px;
         }
-        .btn-accept { background: var(--accent-green); color: white; }
+        .btn-accept { background: var(--accent); color: white; }
         .btn-reject { background: var(--danger); color: white; }
 
         .search-results-section {
@@ -340,8 +291,7 @@
             height: 100%;
             width: 100%;
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             background: var(--bg-panel);
             z-index: 10;
         }
@@ -391,7 +341,7 @@
         .room-input-box button {
             background: var(--accent);
             border: none;
-            color: #121212;
+            color: white;
             padding: 10px 18px;
             border-radius: 8px;
             cursor: pointer;
@@ -413,21 +363,17 @@
     </style>
 </head>
 <body>
-
 <div class="app-container">
     <!-- شاشة التسجيل -->
     <div id="authScreen">
-        <h2 id="authTitle">🛡️ GUILDS</h2>
+        <h2 id="authTitle">Guilds</h2>
         <p id="authSubtitle" style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">اختر شخصية أنيمي أو كرتون للقبك</p>
         
         <div id="registerFields">
             <input type="text" id="nicknameInput" placeholder="اكتب لقبك (مثلاً: Naruto أو Luffy)">
             <input type="password" id="passwordInput" placeholder="اختر كلمة سر لحسابك">
-            <div style="text-align:right; font-size:12px; color:var(--text-muted); margin-top:5px;">صورة البروفايل (من الاستديو):</div>
-            <input type="file" id="avatarFileReg" accept="image/*" style="padding:8px;">
-            
             <div id="errorMsg" class="error-msg">هذا اللقب محجوز حصرياً للمالك!</div>
-            <button id="btnEnter">ابدأ الرحلة</button>
+            <button id="btnEnter">ابدأ</button>
         </div>
 
         <div id="loginFields" style="display: none;">
@@ -445,202 +391,140 @@
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="color: var(--accent); margin: 0;">⚙️ الإعدادات والملف الشخصي</h3>
+                <h3 style="color: var(--accent); margin: 0;">⚙️ إعدادات التطبيق</h3>
                 <button onclick="closeModal('settingsModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer; font-weight:bold;">✕</button>
             </div>
-
             <div class="setting-group">
                 <label>سمة التطبيق (المظهر):</label>
                 <div style="display:flex; gap:10px; margin-top:6px;">
-                    <button onclick="setTheme('dark')" style="flex:1; padding:8px; background:#1e1e1e; color:#e0e0e0; border:1px solid #444; border-radius:6px; cursor:pointer; font-weight:bold;">🌙 داكن RPG</button>
+                    <button onclick="setTheme('dark')" style="flex:1; padding:8px; background:#111b21; color:#e9edef; border:1px solid #3d4a52; border-radius:6px; cursor:pointer; font-weight:bold;">🌙 داكن</button>
                     <button onclick="setTheme('light')" style="flex:1; padding:8px; background:#f0f2f5; color:#111b21; border:1px solid #d1d7db; border-radius:6px; cursor:pointer; font-weight:bold;">☀️ أبيض</button>
                 </div>
             </div>
-
             <div class="setting-group">
-                <label>تغيير صورة البروفايل من الاستديو:</label>
-                <input type="file" id="settingsAvatarFile" accept="image/*" style="font-size:13px; padding:6px;">
-                <button onclick="updateProfileAvatarFromFile()" style="width:100%; background:var(--accent); border:none; padding:8px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:6px;">حفظ الصورة الجديدة</button>
+                <label>إرسال بلاغ أو شكوى للإدارة:</label>
+                <textarea id="reportText" placeholder="اكتب تفاصيل البلاغ أو الشكوى هنا..." rows="3" style="resize:none;"></textarea>
+                <button onclick="submitReport()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إرسال البلاغ</button>
             </div>
-
-            <div class="setting-group">
-                <label>تغيير اللقب (شخصية الأنيمي):</label>
-                <input type="text" id="settingsNicknameInput" placeholder="اكتب اللقب الجديد">
-                <div id="nickChangeMsg" style="font-size:12px; margin-bottom:6px; display:none;"></div>
-                <button onclick="updateProfileNickname()" style="width:100%; background:var(--accent); border:none; padding:8px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer;">تحديث اللقب</button>
+            <div class="setting-group" style="border:none; margin-bottom:0; padding-bottom:0;">
+                <button onclick="logoutUser()" style="width:100%; background:var(--danger); border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تسجيل الخروج</button>
             </div>
-
-            <div class="setting-group">
-                <label>الإبلاغات والمشاكل:</label>
-                <button onclick="openModal('reportsModal')" style="width:100%; background:#333; border:none; padding:9px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">⚠️ إرسال بلاغ أو مشكلة</button>
-            </div>
-
-            <button onclick="logoutUser()" style="width:100%; background:var(--danger); border:none; padding:10px; color:white; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:5px;">🚪 تسجيل الخروج</button>
         </div>
     </div>
 
-    <!-- نافذة الإبلاغات -->
-    <div id="reportsModal" class="modal-overlay">
+    <!-- نافذة البروفايل (تغيير الصورة من الاستوديو، اللقب، كلمة السر فقط) -->
+    <div id="profileModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="color: var(--accent); margin-top: 0;">⚠️ إرسال بلاغ أو شكوى</h3>
-            <textarea id="reportTextContent" placeholder="اكتب تفاصيل المشكلة أو البلاغ هنا..." rows="4" style="resize:none;"></textarea>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button onclick="submitUserReport()" style="flex:1; background:var(--accent); border:none; padding:10px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer;">إرسال البلاغ</button>
-                <button onclick="closeModal('reportsModal')" style="flex:1; background:#333; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="color: var(--accent); margin: 0;">👤 الملف الشخصي</h3>
+                <button onclick="closeModal('profileModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer; font-weight:bold;">✕</button>
+            </div>
+            <div class="setting-group">
+                <label>تغيير صورة البروفايل (من الاستوديو):</label>
+                <input type="file" id="profileImageFile" accept="image/*" style="padding:6px;">
+                <button onclick="uploadProfileImage()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:5px;">حفظ الصورة الجديدة</button>
+            </div>
+            <div class="setting-group">
+                <label>تغيير اللقب:</label>
+                <input type="text" id="settingsNicknameInput" placeholder="اكتب اللقب الجديد">
+                <button onclick="updateProfileNickname()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تحديث اللقب</button>
+            </div>
+            <div class="setting-group" style="border:none; margin-bottom:0; padding-bottom:0;">
+                <label>تغيير كلمة السر:</label>
+                <input type="password" id="settingsPasswordInput" placeholder="كلمة السر الجديدة">
+                <button onclick="updatePassword()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تحديث كلمة السر</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة استكشاف النقابات -->
+    <!-- نافذة النقابات (استكشاف، انضمام، وإنشاء نقابة) -->
     <div id="guildsExplorerModal" class="modal-overlay">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="color: var(--accent); margin: 0;">🛡️ النقابات المعتمدة</h3>
+                <h3 style="color: var(--accent); margin: 0;">🛡️ إدارة النقابات</h3>
                 <button onclick="closeModal('guildsExplorerModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer; font-weight:bold;">✕</button>
             </div>
-            <p style="font-size:12px; color:var(--text-muted); margin-top:0;">اختر نقابة للانضمام الفوري:</p>
-            <div id="availableGuildsList" style="margin-bottom:15px;"></div>
-            <button onclick="closeModal('guildsExplorerModal'); openModal('requestGuildModal');" style="width:100%; background:#333; border:none; padding:10px; color:white; border-radius:8px; font-weight:bold; cursor:pointer;">+ طلب إنشاء نقابة جديدة</button>
+            <button onclick="openModal('createGuildModal')" style="width:100%; background:var(--accent); border:none; padding:10px; color:white; border-radius:8px; font-weight:bold; cursor:pointer; margin-bottom:12px;">+ إنشاء نقابة جديدة</button>
+            <div id="availableGuildsList"></div>
         </div>
     </div>
 
-    <!-- نافذة طلب إنشاء نقابة -->
-    <div id="requestGuildModal" class="modal-overlay">
+    <!-- نافذة إنشاء نقابة جديدة -->
+    <div id="createGuildModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="color: var(--accent); margin-top: 0;">طلب إنشاء نقابة جديدة</h3>
-            <input type="text" id="reqGuildName" placeholder="اسم النقابة المطلوبة">
-            <textarea id="reqGuildDesc" placeholder="وصف النقابة وأهدافها..." rows="3" style="resize:none;"></textarea>
-            <div style="text-align:right; font-size:12px; color:var(--text-muted); margin-top:5px;">شعار النقابة (من الاستديو):</div>
-            <input type="file" id="reqGuildAvatarFile" accept="image/*" style="padding:8px;">
+            <h3 style="color: var(--accent); margin-top: 0;">إنشاء نقابة جديدة</h3>
+            <input type="text" id="newGuildNameInput" placeholder="اسم النقابة">
+            <textarea id="newGuildDescInput" placeholder="وصف النقابة..." rows="3" style="resize:none;"></textarea>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button id="btnSendGuildReq" style="flex:1; background:var(--accent); border:none; padding:10px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer;">إرسال الطلب</button>
-                <button onclick="closeModal('requestGuildModal')" style="flex:1; background:#333; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
+                <button onclick="createNewGuild()" style="flex:1; background:var(--accent); border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تأكيد الإنشاء</button>
+                <button onclick="closeModal('createGuildModal')" style="flex:1; background:#3d4a52; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة تعديل النقابة -->
-    <div id="editGuildModal" class="modal-overlay">
+    <!-- نافذة أعضاء النقابة -->
+    <div id="membersModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="color: var(--accent); margin-top: 0;">تعديل بيانات النقابة</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3 style="color: var(--accent); margin: 0;">👥 أعضاء النقابة</h3>
+                <button onclick="closeModal('membersModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer; font-weight:bold;">✕</button>
+            </div>
+            <div id="guildMembersList" style="margin-bottom:15px; max-height:200px; overflow-y:auto;"></div>
+            <div id="leaderMemberTools" style="display:none; border-top:1px solid var(--border-color); padding-top:10px;">
+                <h4 style="font-size:12px; color:var(--danger); margin:0 0 5px 0;">أدوات الطرد:</h4>
+                <input type="text" id="kickUserIdInput" placeholder="أدخل ID العضو لطرده">
+                <button onclick="kickGuildMember()" style="width:100%; background:var(--danger); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">طرد العضو</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إعدادات النقابة للمالك/القائد -->
+    <div id="guildSettingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--accent); margin-top: 0;">🏰 إعدادات النقابة</h3>
             <input type="text" id="editGuildNameInput" placeholder="اسم النقابة الجديد">
-            <textarea id="editGuildDescInput" placeholder="وصف النقابة..." rows="3" style="resize:none;"></textarea>
-            <div style="text-align:right; font-size:12px; color:var(--text-muted); margin-top:5px;">شعار النقابة الجديد (من الاستديو):</div>
-            <input type="file" id="editGuildAvatarFile" accept="image/*" style="padding:8px;">
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button id="btnSaveGuildEdit" style="flex:1; background:var(--accent); border:none; padding:10px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer;">حفظ التعديلات</button>
-                <button onclick="closeModal('editGuildModal')" style="flex:1; background:#333; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
-            </div>
+            <textarea id="editGuildDescInput" rows="2" style="resize:none;"></textarea>
+            <button onclick="saveGuildSettings()" style="width:100%; background:var(--accent); border:none; padding:9px; color:white; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px;">حفظ التعديلات</button>
+            <button onclick="confirmDeleteGuild()" style="width:100%; background:var(--danger); border:none; padding:9px; color:white; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px;">حذف النقابة نهائياً ⚠️</button>
         </div>
     </div>
 
-    <!-- نافذة طلب الترقية -->
-    <div id="promotionModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 style="color: var(--accent); margin-top: 0;">طلب ترقية رتبة</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">اختر الرتبة التي تطمح للوصول إليها:</p>
-            <select id="targetRankSelect">
-                <option value="العبقري المتأخر">العبقري المتأخر</option>
-                <option value="عبقري البرق">عبقري البرق</option>
-                <option value="تشيبوكاي">تشيبوكاي</option>
-                <option value="المستشار">المستشار</option>
-                <option value="نائب القائد">نائب القائد</option>
-            </select>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button id="btnSendPromoReq" style="flex:1; background:var(--accent); border:none; padding:10px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer;">إرسال الطلب للقائد</button>
-                <button onclick="closeModal('promotionModal')" style="flex:1; background:#333; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة دعوة زيارة -->
-    <div id="visitInviteModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 style="color: var(--accent); margin-top: 0;">إصدار دعوة زيارة لنقابتك</h3>
-            <input type="text" id="inviteTargetId" placeholder="أدخل ID الزائر المستهدف">
-            <select id="inviteDuration">
-                <option value="1">زيارة لمدة يوم واحد (1 يوم)</option>
-                <option value="2">زيارة لمدة يومين (2 يوم)</option>
-                <option value="3">زيارة لمدة 3 أيام (3 أيام)</option>
-            </select>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button id="btnSendInvite" style="flex:1; background:var(--accent); border:none; padding:10px; color:#121212; border-radius:6px; font-weight:bold; cursor:pointer;">إرسال الدعوة</button>
-                <button onclick="closeModal('visitInviteModal')" style="flex:1; background:#333; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- لوحة التحكم الرئيسية بتصميم زي الصورة (RPG Interface) -->
+    <!-- لوحة التحكم الرئيسية -->
     <div id="mainDashboard" style="display: none; flex-direction: column; height: 100vh; width: 100%;">
         <div class="chat-header">
-            <h3>🛡️ GUILDS</h3>
-            <div class="header-actions">
-                <button class="btn-icon" id="btnExploreGuilds" onclick="openGuildsExplorer()" title="النقابات">🛡️</button>
-                <button class="btn-icon" id="btnLeaveGuild" onclick="leaveCurrentGuild()" style="display:none; color:var(--danger);" title="مغادرة النقابة">🚪</button>
-                <button class="btn-icon" id="btnOpenEditGuildModal" onclick="openModal('editGuildModal')" style="display:none;" title="تعديل النقابة">✏️</button>
-                <button class="btn-icon" id="btnOpenPromoModal" onclick="openModal('promotionModal')" style="display:none;" title="طلب ترقية">⭐</button>
-                <button class="btn-icon" id="btnOpenInviteModal" onclick="openModal('visitInviteModal')" style="display:none;" title="إصدار دعوة">🎫</button>
-                <button class="btn-icon" id="btnAdminPanel" style="display:none;" title="لوحة الإدارة">👑</button>
-                <button class="btn-icon" id="btnSettings" onclick="openSettingsModal()" title="الإعدادات">⚙️</button>
-            </div>
-        </div>
-
-        <!-- كارت البروفايل العلوي (مطابق للصورة) -->
-        <div class="profile-banner">
-            <div class="avatar-container">
-                <div class="avatar" id="myHeaderAvatar"></div>
-                <div class="online-dot"></div>
-            </div>
-            <div style="min-width: 0; flex: 1;">
-                <div id="userBadge" style="font-weight: bold; font-size: 15px; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                    <span id="myUserRankBadge" style="color: var(--danger); font-weight: bold;"></span> | <span id="myUserIdBadge" style="color: var(--accent);"></span>
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                <div class="avatar" id="myHeaderAvatar" style="width:38px;height:38px;font-size:14px;"></div>
+                <div style="min-width: 0;">
+                    <h3 id="userBadge" style="margin:0; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></h3>
+                    <span id="myUserRankBadge" style="font-size:11px; color:var(--danger); font-weight:bold;"></span>
+                    <span id="myUserIdBadge" style="font-size:11px; color:var(--accent);"></span>
                 </div>
             </div>
-            <div style="font-size: 11px; color: var(--online-color); font-weight: bold;">● Online</div>
-        </div>
-
-        <!-- شريط التبويبات العلوي (Tabs) -->
-        <div class="top-tabs">
-            <div class="tab-item active" onclick="switchTab('home')">Home</div>
-            <div class="tab-item" onclick="switchTab('guildChat')">Guild Chat</div>
-            <div class="tab-item" onclick="switchTab('privateChats')">Private Chats</div>
-            <div class="tab-item" onclick="switchTab('adminPanelTab')" id="tabAdminHeader" style="display:none;">Admin Panel</div>
+            <div class="header-actions">
+                <button class="btn-icon" id="btnOpenMembersModal" onclick="openMembersModal()" style="font-size:14px;" title="الأعضاء">👥</button>
+                <button class="btn-icon" id="btnOpenGuildSettings" onclick="openGuildSettingsModal()" style="display:none; font-size:14px;" title="إعدادات النقابة">⚙️</button>
+                <button class="btn-icon" id="btnAdminPanel" style="display:none; font-size:15px;" title="لوحة الإدارة">👑</button>
+                <button class="btn-icon" id="btnSettings" onclick="openModal('settingsModal')" style="font-size:18px;" title="الإعدادات">⚙️</button>
+                <button class="btn-icon" onclick="openModal('requestsModal')" style="font-size:18px;" title="الطلبات">
+                    📩
+                    <span class="badge-dot" id="requestsBadgeDot">0</span>
+                </button>
+            </div>
         </div>
 
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="ابحث بالـ ID الدقيق لشخص للتواصل..." oninput="searchUsersById(this.value)">
+            <input type="text" id="searchInput" placeholder="اكتب الـ ID الدقيق للشخص للتواصل معه..." oninput="searchUsersById(this.value)">
         </div>
 
-        <!-- لوحة الإدارة (Admin Panel Section) -->
+        <div id="activityLogSection" class="activity-log-section" style="display:none;">
+            <h4>📜 سجل أحداث النقابة:</h4>
+            <div id="guildActivityLogList" style="font-size:12px; color:var(--text-muted);"></div>
+        </div>
+
         <div id="adminPanelSection" class="admin-panel-section" style="display: none;">
-            <h4 style="color: var(--danger);">لوحة تحكم الإدارة وصلاحيات القائد:</h4>
+            <h4 style="color: var(--danger);">لوحة تحكم القائد والإدارة:</h4>
             <div id="joinGuildRequestsList"></div>
-            
-            <div id="manageMembersBox" style="margin-top: 10px; background:var(--bg-panel); padding:8px; border-radius:8px;">
-                <h5 style="margin:0 0 6px 0; color:var(--accent);">إدارة أعضاء النقابة (طرد وتفويض الصلاحيات):</h5>
-                <div id="guildMembersList" style="max-height:120px; overflow-y:auto;"></div>
-            </div>
-
-            <div id="guildRequestsList" style="margin-top: 6px;"></div>
-            <div id="promotionRequestsList" style="margin-top: 6px;"></div>
-            <div id="directPromotionBox" style="margin-top: 10px;">
-                <input type="text" id="directUserIdInput" placeholder="أدخل ID العضو للترقية المباشرة" style="padding:6px; font-size:13px; width:58%; background:var(--bg-input); border:1px solid var(--input-border); color:var(--text-main); border-radius:6px;">
-                <select id="directRankSelect" style="padding:6px; font-size:13px; width:38%; background:var(--bg-input); border:1px solid var(--input-border); color:var(--text-main); border-radius:6px;">
-                    <option value="المبتدئ">المبتدئ</option>
-                    <option value="العبقري المتأخر">العبقري المتأخر</option>
-                    <option value="عبقري البرق">عبقري البرق</option>
-                    <option value="تشيبوكاي">تشيبوكاي</option>
-                    <option value="المستشار">المستشار</option>
-                    <option value="نائب القائد">نائب القائد</option>
-                </select>
-                <button onclick="directPromoteUser()" style="background:var(--accent); color:#121212; border:none; padding:6px; border-radius:4px; margin-top:5px; cursor:pointer; width:100%; font-weight:bold;">ترقية مباشرة فورية</button>
-            </div>
-        </div>
-
-        <div id="requestsSection" class="requests-section" style="display: none;">
-            <h4>طلبات المراسلة الواردة:</h4>
-            <div id="requestsList"></div>
+            <div id="newGuildNotificationsList"></div>
         </div>
 
         <div id="searchResultsSection" class="search-results-section">
@@ -648,82 +532,61 @@
             <div id="searchResultsList"></div>
         </div>
 
-        <!-- قائمة المحادثات وغرف الشات -->
         <div class="chats-list" id="chatsList">
             <div id="guildRoomsContainer" style="display: none;">
-                <div class="chat-section-title">Guild Chat</div>
-                
                 <div class="chat-item" onclick="openRoom('global', 'الشات العام للنقابة')">
-                    <div class="avatar" style="width:38px; height:38px; font-size:15px; margin-left:12px;">🌐</div>
+                    <div class="avatar" id="guildAvatarBox">🌐</div>
                     <div class="chat-info">
-                        <div class="chat-name">Global Guild Chat <span id="todayMsgCount" style="font-size:11px; color:var(--accent); float:left;"></span></div>
-                        <div class="chat-last-msg">General discussion & community chat</div>
+                        <div class="chat-name">الشات العام</div>
+                        <div class="chat-last-msg" id="guildNameLabel">التواصل مع أعضاء نقابتك</div>
                     </div>
                 </div>
-
                 <div class="chat-item" onclick="openRoom('announcements', 'قسيمة الإعلانات')">
-                    <div class="avatar" style="width:38px; height:38px; font-size:15px; margin-left:12px; background:#333;">📢</div>
+                    <div class="avatar" style="background: #1f2c34;">📢</div>
                     <div class="chat-info">
-                        <div class="chat-name">Announcements</div>
-                        <div class="chat-last-msg">Leaders and Officers only</div>
+                        <div class="chat-name">الإعلانات (ADs)</div>
+                        <div class="chat-last-msg">أحدث أخبار وتنبيهات النقابة</div>
                     </div>
                 </div>
-
-                <div class="chat-item" onclick="openRoom('work', 'جروب العمل')">
-                    <div class="avatar" style="width:38px; height:38px; font-size:15px; margin-left:12px; background:#005c4b;">💼</div>
+                <div class="chat-item" id="adminsRoomItem" style="display:none;" onclick="openRoom('admins', 'غرفة الإدارة السري')">
+                    <div class="avatar" style="background: var(--danger);">🛡️</div>
                     <div class="chat-info">
-                        <div class="chat-name">Work Group</div>
-                        <div class="chat-last-msg">Mission coordination & tasks</div>
-                    </div>
-                </div>
-
-                <div class="chat-item" id="adminsRoomItem" style="display:none;" onclick="openRoom('admins', 'جروب المشرفين السري')">
-                    <div class="avatar" style="width:38px; height:38px; font-size:15px; margin-left:12px; background:var(--danger);">🛡️</div>
-                    <div class="chat-info">
-                        <div class="chat-name" style="color: var(--danger);">Admin Secret Group</div>
-                        <div class="chat-last-msg">High Council & Management</div>
+                        <div class="chat-name" style="color: var(--danger);">الإدارة (ADMINS)</div>
+                        <div class="chat-last-msg">غرفة القيادة</div>
                     </div>
                 </div>
             </div>
 
-            <div class="chat-section-title">Private Chats</div>
             <div class="chat-item" onclick="openRoom('saved_messages', 'شات أنت (You)')">
-                <div class="avatar" style="width:38px; height:38px; font-size:15px; margin-left:12px; background:#005c4b;">⭐</div>
+                <div class="avatar" style="background: #005c4b;">⭐</div>
                 <div class="chat-info">
-                    <div class="chat-name">أنت (You - Saved Messages)</div>
-                    <div class="chat-last-msg">ملاحظاتك الشخصية والروابط</div>
+                    <div class="chat-name">أنت (You)</div>
+                    <div class="chat-last-msg">ملاحظاتك الشخصية</div>
                 </div>
             </div>
             
             <div id="acceptedChatsList"></div>
         </div>
 
-        <!-- شريط التنقل السفلي (Bottom Navigation Bar مطابق للصورة) -->
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchBottomNav('dashboard')">
-                <span class="icon">🏠</span>
-                <span>Dashboard</span>
-            </div>
-            <div class="nav-item" onclick="openGuildsExplorer()">
-                <span class="icon">🛡️</span>
-                <span>Guilds List</span>
-            </div>
-            <div class="nav-item" onclick="openModal('promotionModal')">
-                <span class="icon">⭐</span>
-                <span>Missions</span>
-            </div>
-            <div class="nav-item" onclick="switchBottomNav('messages')">
-                <span class="icon">💬</span>
-                <span>Messages</span>
-            </div>
-            <div class="nav-item" onclick="openSettingsModal()">
-                <span class="icon">👤</span>
-                <span>Profile</span>
-            </div>
+        <!-- الشريط السفلي (البروفايل والنقابات) -->
+        <div class="bottom-nav-bar">
+            <button class="nav-btn" onclick="openModal('profileModal')">👤 البروفايل</button>
+            <button class="nav-btn" onclick="openGuildsExplorer()">🛡️ النقابات</button>
         </div>
 
         <div class="app-footer">
             Developed by <span>Kakarot ╏ Youssef</span>
+        </div>
+    </div>
+
+    <!-- نافذة صندوق الطلبات (Message requests) -->
+    <div id="requestsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3 style="color: var(--accent); margin: 0;">📩 صندوق الطلبات</h3>
+                <button onclick="closeModal('requestsModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer; font-weight:bold;">✕</button>
+            </div>
+            <div id="requestsList" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
     </div>
 
@@ -741,6 +604,7 @@
         </div>
     </div>
 </div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, get, push, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -756,23 +620,16 @@
         measurementId: "G-NGCXSP5CSP"
     };
 
-    let db;
-    try {
-        const app = initializeApp(firebaseConfig);
-        db = getDatabase(app);
-    } catch (err) {
-        console.error("Firebase Init Error:", err);
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
     const OWNER_ID = "Kakarot_San1999";
     const OWNER_PASSWORD = "My World Is Dragon ball";
-    
     const EXCLUSIVE_OWNER_NAMES = ['goku', 'kakarot', 'كاكاروت', 'غوكو'];
-    const forbiddenWords = ['لبوه', 'لبوة', 'شرموطة', 'شرموطه', 'قحبة', 'قحبه', 'منيوك', 'عرص', 'خيال', 'وسخ', 'متناكة', 'كول', 'بضان'];
+    const forbiddenWords = ['لبوه', 'لبوة', 'شرموطة', 'شرموطه', 'قحبة', 'قحبه', 'منيوك', 'عرص', 'خيال', 'وسخ', 'متناكة'];
 
     let savedGuild = localStorage.getItem('nexus_guild') || 'NONE';
     let savedNickname = localStorage.getItem('nexus_nickname');
-    let savedShortName = localStorage.getItem('nexus_shortname') || '';
     let myId = localStorage.getItem('nexus_id');
     let myAvatar = localStorage.getItem('nexus_avatar') || '';
     let myRank = localStorage.getItem('nexus_rank') || 'مستقل';
@@ -782,1142 +639,453 @@
     if (savedTheme === 'light') document.body.classList.add('light-theme');
 
     window.setTheme = function(theme) {
-        if (theme === 'light') {
-            document.body.classList.add('light-theme');
-        } else {
-            document.body.classList.remove('light-theme');
-        }
+        if (theme === 'light') document.body.classList.add('light-theme');
+        else document.body.classList.remove('light-theme');
         localStorage.setItem('nexus_theme', theme);
     };
 
-    window.openModal = function(id) {
-        document.getElementById(id).style.display = 'flex';
-    };
-    window.closeModal = function(id) {
-        document.getElementById(id).style.display = 'none';
-    };
-
-    // التبديل بين التبويبات العلوية (Tabs) مطابقة للتصميم
-    window.switchTab = function(tabName) {
-        const tabs = document.querySelectorAll('.tab-item');
-        tabs.forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-
-        if (tabName === 'adminPanelTab') {
-            const sec = document.getElementById('adminPanelSection');
-            sec.style.display = 'block';
-            sec.scrollIntoView({ behavior: 'smooth' });
-        } else if (tabName === 'privateChats') {
-            const acceptedList = document.getElementById('acceptedChatsList');
-            if (acceptedList) acceptedList.scrollIntoView({ behavior: 'smooth' });
-        } else if (tabName === 'guildChat') {
-            const guildBox = document.getElementById('guildRoomsContainer');
-            if (guildBox) guildBox.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
-
-    window.switchBottomNav = function(navName) {
-        const navs = document.querySelectorAll('.nav-item');
-        navs.forEach(n => n.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-
-        if (navName === 'messages') {
-            const chatSec = document.getElementById('chatsList');
-            if (chatSec) chatSec.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
-
-    function convertFileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    }
+    window.openModal = function(id) { document.getElementById(id).style.display = 'flex'; };
+    window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; };
 
     async function initOwnerAccount() {
-        if (!db) return;
         try {
             const ownerSnap = await get(ref(db, `users_directory/${OWNER_ID}`));
             if (!ownerSnap.exists()) {
                 await set(ref(db, `users_directory/${OWNER_ID}`), {
-                    nickname: "Goku (BRISK)",
-                    shortName: "Goku",
-                    guild: "BRISK",
-                    avatar: "",
-                    userId: OWNER_ID,
-                    password: OWNER_PASSWORD,
-                    rank: "القائد",
-                    isAdmin: true,
-                    isOnline: true
+                    nickname: "Goku", guild: "BRISK", avatar: "", userId: OWNER_ID, password: OWNER_PASSWORD, rank: "القائد"
                 });
                 await set(ref(db, `guilds_registry/BRISK/Goku`), OWNER_ID);
             }
             const briskSnap = await get(ref(db, 'approved_guilds/BRISK'));
             if (!briskSnap.exists()) {
-                await set(ref(db, 'approved_guilds/BRISK'), {
-                    description: 'النقابة الأساسية للنظام',
-                    avatar: '',
-                    leaderId: OWNER_ID
-                });
+                await set(ref(db, 'approved_guilds/BRISK'), { description: 'النقابة الأساسية', leaderId: OWNER_ID });
             }
-        } catch (e) {
-            console.log("Init check:", e);
-        }
+        } catch (e) { console.log(e); }
     }
     initOwnerAccount();
 
-    function checkDailyMessageReset() {
-        const lastResetDate = localStorage.getItem('nexus_last_reset');
-        const todayStr = new Date().toDateString();
-        if (lastResetDate !== todayStr) {
-            localStorage.setItem('nexus_today_msgs', '0');
-            localStorage.setItem('nexus_last_reset', todayStr);
-        }
-        const count = localStorage.getItem('nexus_today_msgs') || '0';
-        const badge = document.getElementById('todayMsgCount');
-        if (badge) badge.innerText = `(رسائل اليوم: ${count})`;
-    }
-    setInterval(checkDailyMessageReset, 10000);
-
     window.toggleAuthMode = function() {
         isLoginMode = !isLoginMode;
-        const regFields = document.getElementById('registerFields');
-        const logFields = document.getElementById('loginFields');
-        const switchBtn = document.getElementById('switchModeBtn');
-        const title = document.getElementById('authSubtitle');
-
-        if (isLoginMode) {
-            regFields.style.display = 'none';
-            logFields.style.display = 'block';
-            switchBtn.innerHTML = 'ليس لديك حساب؟ <span>أنشئ حساب جديد</span>';
-            title.innerText = 'أدخل بيانات حسابك القديم للاستعادة';
-        } else {
-            regFields.style.display = 'block';
-            logFields.style.display = 'none';
-            switchBtn.innerHTML = 'لديك حساب قديم؟ <span>تسجيل الدخول بالـ ID</span>';
-            title.innerText = 'اختر شخصية أنيمي أو كرتون للقبك';
-        }
+        document.getElementById('registerFields').style.display = isLoginMode ? 'none' : 'block';
+        document.getElementById('loginFields').style.display = isLoginMode ? 'block' : 'none';
+        document.getElementById('switchModeBtn').innerHTML = isLoginMode ? 'ليس لديك حساب؟ <span>أنشئ حساب جديد</span>' : 'لديك حساب قديم؟ <span>تسجيل الدخول بالـ ID</span>';
     };
 
     document.getElementById('btnEnter').onclick = async function() {
         const rawNickname = document.getElementById('nicknameInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
-        const avatarFile = document.getElementById('avatarFileReg').files[0];
         const errorMsg = document.getElementById('errorMsg');
 
-        if (!rawNickname) {
-            alert('الرجاء إدخال اللقب (شخصية الأنيمي)!');
-            return;
-        }
-        if (!password) {
-            alert('الرجاء إدخال كلمة سر لحسابك!');
-            return;
-        }
-
+        if (!rawNickname || !password) { alert('الرجاء إدخال اللقب وكلمة السر!'); return; }
         const lowerNick = rawNickname.toLowerCase();
-        if (EXCLUSIVE_OWNER_NAMES.includes(lowerNick)) {
-            errorMsg.innerText = 'هذا اللقب محجوز حصرياً للمالك!';
+        if (EXCLUSIVE_OWNER_NAMES.includes(lowerNick) || forbiddenWords.some(w => lowerNick.includes(w))) {
+            errorMsg.innerText = 'هذا اللقب غير مسموح أو محجوز!';
             errorMsg.style.display = 'block';
             return;
-        }
-
-        if (forbiddenWords.some(word => lowerNick.includes(word))) {
-            errorMsg.innerText = 'عفواً، الألقاب التي تحتوي على ألفاظ غير لائقة ممنوعة تماماً!';
-            errorMsg.style.display = 'block';
-            return;
-        }
-        errorMsg.style.display = 'none';
-
-        let avatarBase64 = '';
-        if (avatarFile) {
-            try { avatarBase64 = await convertFileToBase64(avatarFile); } catch (e) {}
         }
 
         myId = 'guild_' + Math.random().toString(36).substring(2, 9);
         savedGuild = 'NONE';
-        savedShortName = rawNickname;
         savedNickname = rawNickname;
         myRank = 'مستقل';
-        myAvatar = avatarBase64;
+        myAvatar = '';
 
         localStorage.setItem('nexus_id', myId);
         localStorage.setItem('nexus_guild', savedGuild);
-        localStorage.setItem('nexus_shortname', savedShortName);
         localStorage.setItem('nexus_nickname', savedNickname);
         localStorage.setItem('nexus_avatar', myAvatar);
         localStorage.setItem('nexus_rank', myRank);
 
-        try {
-            await set(ref(db, `users_directory/${myId}`), {
-                nickname: savedNickname,
-                shortName: savedShortName,
-                guild: savedGuild,
-                avatar: myAvatar,
-                userId: myId,
-                password: password,
-                rank: myRank,
-                isAdmin: false,
-                isOnline: true
-            });
-            alert(`تم إنشاء حسابك بنجاح!\nمعرفك الخاص (ID) هو: ${myId}`);
-            showDashboard();
-        } catch (e) {
-            alert('حدث خطأ أثناء الاتصال بقاعدة البيانات: ' + e.message);
-        }
+        await set(ref(db, `users_directory/${myId}`), {
+            nickname: savedNickname, guild: savedGuild, avatar: myAvatar, userId: myId, password: password, rank: myRank
+        });
+
+        alert(`تم إنشاء حسابك بنجاح!\nمعرفك الخاص (ID) هو: ${myId}`);
+        showDashboard();
     };
 
     document.getElementById('btnLogin').onclick = async function() {
         const inputId = document.getElementById('loginIdInput').value.trim();
         const inputPass = document.getElementById('loginPasswordInput').value.trim();
+        if (!inputId || !inputPass) return alert('أدخل الـ ID وكلمة السر!');
 
-        if (!inputId || !inputPass) {
-            alert('الرجاء إدخال الـ ID وكلمة السر!');
-            return;
+        const userSnap = await get(ref(db, `users_directory/${inputId}`));
+        if (!userSnap.exists() || userSnap.val().password !== inputPass) {
+            return alert('بيانات الدخول غير صحيحة!');
         }
 
-        const btn = document.getElementById('btnLogin');
-        btn.innerText = "جاري التحقق...";
+        const userData = userSnap.val();
+        myId = userData.userId;
+        myAvatar = userData.avatar || '';
+        myRank = userData.rank || 'مستقل';
+        savedGuild = userData.guild || 'NONE';
+        savedNickname = userData.nickname;
 
-        try {
-            const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('انتهت مهلة الاتصال بالإنترنت')), 6000)
-            );
+        localStorage.setItem('nexus_id', myId);
+        localStorage.setItem('nexus_guild', savedGuild);
+        localStorage.setItem('nexus_nickname', savedNickname);
+        localStorage.setItem('nexus_avatar', myAvatar);
+        localStorage.setItem('nexus_rank', myRank);
 
-            const fetchPromise = get(ref(db, `users_directory/${inputId}`));
-            const userSnap = await Promise.race([fetchPromise, timeoutPromise]);
-            
-            btn.innerText = "استعادة وتسجيل الدخول";
-
-            if (!userSnap.exists()) {
-                alert('هذا الـ ID غير موجود في قاعدة البيانات!');
-                return;
-            }
-
-            const userData = userSnap.val();
-            if (userData.password !== inputPass) {
-                alert('كلمة السر غير صحيحة!');
-                return;
-            }
-
-            myId = userData.userId;
-            myAvatar = userData.avatar || '';
-            myRank = userData.rank || 'مستقل';
-            savedGuild = userData.guild || 'NONE';
-            savedShortName = userData.shortName || userData.nickname.split(' (')[0];
-            savedNickname = userData.nickname;
-
-            localStorage.setItem('nexus_id', myId);
-            localStorage.setItem('nexus_guild', savedGuild);
-            localStorage.setItem('nexus_shortname', savedShortName);
-            localStorage.setItem('nexus_nickname', savedNickname);
-            localStorage.setItem('nexus_avatar', myAvatar);
-            localStorage.setItem('nexus_rank', myRank);
-
-            await set(ref(db, `users_directory/${myId}/isOnline`), true);
-
-            alert('تم استعادة حسابك بنجاح!');
-            showDashboard();
-        } catch (e) {
-            btn.innerText = "استعادة وتسجيل الدخول";
-            alert('فشل الاتصال: ' + e.message);
-        }
+        showDashboard();
     };
 
-    window.logoutUser = async function() {
-        if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-            if (myId && db) {
-                try { await set(ref(db, `users_directory/${myId}/isOnline`), false); } catch(e){}
-            }
-            localStorage.clear();
-            location.reload();
-        }
-    };
-
-    if (savedNickname && myId) {
-        syncUserProfileFromDB().then(() => showDashboard());
-    }
-
-    async function syncUserProfileFromDB() {
-        try {
-            const snap = await get(ref(db, `users_directory/${myId}`));
-            if (snap.exists()) {
-                const data = snap.val();
-                savedGuild = data.guild || 'NONE';
-                savedNickname = data.nickname;
-                savedShortName = data.shortName || data.nickname.split(' (')[0];
-                myRank = data.rank || (savedGuild === 'NONE' ? 'مستقل' : 'المبتدئ');
-                myAvatar = data.avatar || '';
-
-                localStorage.setItem('nexus_guild', savedGuild);
-                localStorage.setItem('nexus_nickname', savedNickname);
-                localStorage.setItem('nexus_shortname', savedShortName);
-                localStorage.setItem('nexus_rank', myRank);
-                localStorage.setItem('nexus_avatar', myAvatar);
-
-                await set(ref(db, `users_directory/${myId}/isOnline`), true);
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    if (savedNickname && myId) showDashboard();
 
     async function showDashboard() {
         document.getElementById('authScreen').style.display = 'none';
         document.getElementById('mainDashboard').style.display = 'flex';
         
-        const nickname = localStorage.getItem('nexus_nickname');
-        const guild = localStorage.getItem('nexus_guild') || 'NONE';
-        const avatar = localStorage.getItem('nexus_avatar');
-        myRank = localStorage.getItem('nexus_rank') || 'مستقل';
-
-        document.getElementById('userBadge').innerText = nickname;
+        document.getElementById('userBadge').innerText = savedNickname;
         document.getElementById('myUserRankBadge').innerText = `[${myRank}]`;
         document.getElementById('myUserIdBadge').innerText = `ID: ${myId}`;
 
         const headerAv = document.getElementById('myHeaderAvatar');
-        if (avatar) {
-            headerAv.innerHTML = `<img src="${avatar}">`;
-        } else {
-            headerAv.innerText = nickname[0];
-        }
+        headerAv.innerHTML = myAvatar ? `<img src="${myAvatar}">` : savedNickname[0];
 
-        if (guild && guild !== 'NONE') {
+        if (savedGuild && savedGuild !== 'NONE') {
             document.getElementById('guildRoomsContainer').style.display = 'block';
-            document.getElementById('btnOpenPromoModal').style.display = 'inline-block';
-            document.getElementById('btnLeaveGuild').style.display = 'inline-block';
+            document.getElementById('guildNameLabel').innerText = `نقابة: ${savedGuild}`;
         } else {
             document.getElementById('guildRoomsContainer').style.display = 'none';
-            document.getElementById('btnOpenPromoModal').style.display = 'none';
-            document.getElementById('btnLeaveGuild').style.display = 'none';
         }
 
-        if (myId === OWNER_ID || myRank === 'القائد' || myRank === 'نائب القائد' || myRank === 'المستشار') {
-            document.getElementById('btnOpenEditGuildModal').style.display = 'inline-block';
-            document.getElementById('btnOpenInviteModal').style.display = 'inline-block';
-            document.getElementById('adminPanelSection').style.display = 'block';
-            document.getElementById('tabAdminHeader').style.display = 'block';
-            loadJoinGuildRequests(guild);
-            loadGuildMembersForManagement(guild);
-        }
-
-        if (myId === OWNER_ID || myRank === 'القائد') {
+        if (['القائد', 'نائب القائد', 'المستشار'].includes(myRank) || myId === OWNER_ID) {
+            document.getElementById('btnOpenGuildSettings').style.display = 'inline-block';
             document.getElementById('btnAdminPanel').style.display = 'inline-block';
-            loadPromotionRequestsForLeader(guild);
-            if (myId === OWNER_ID) {
-                loadGuildRequestsForOwner();
-            }
+            loadGuildManagement(savedGuild);
         }
 
-        checkIfAdminOrOwner(guild);
-        loadRequests();
+        checkAdminRoom(savedGuild);
+        loadRealtimeNotifications();
+        loadGuildActivityLog(savedGuild);
         loadAcceptedChats();
-        checkDailyMessageReset();
     }
 
-    window.openSettingsModal = function() {
-        document.getElementById('settingsNicknameInput').value = localStorage.getItem('nexus_shortname') || '';
-        document.getElementById('nickChangeMsg').style.display = 'none';
-        openModal('settingsModal');
-    };
-
-    window.updateProfileAvatarFromFile = async function() {
-        const fileInput = document.getElementById('settingsAvatarFile').files[0];
-        if (!fileInput) {
-            alert('اختر صورة من الاستديو أولاً!');
-            return;
-        }
-
-        try {
-            const base64Img = await convertFileToBase64(fileInput);
-            myAvatar = base64Img;
-            localStorage.setItem('nexus_avatar', base64Img);
-
-            await set(ref(db, `users_directory/${myId}/avatar`), base64Img);
-            const headerAv = document.getElementById('myHeaderAvatar');
-            headerAv.innerHTML = `<img src="${base64Img}">`;
-            alert('تم تحديث صورة البروفايل بنجاح!');
-        } catch (e) {
-            alert('حدث خطأ أثناء حفظ الصورة.');
+    // إدارة البروفايل (الصورة من الاستوديو، اللقب، كلمة السر)
+    window.uploadProfileImage = function() {
+        const fileInput = document.getElementById('profileImageFile');
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                myAvatar = e.target.result;
+                localStorage.setItem('nexus_avatar', myAvatar);
+                await set(ref(db, `users_directory/${myId}/avatar`), myAvatar);
+                document.getElementById('myHeaderAvatar').innerHTML = `<img src="${myAvatar}">`;
+                alert('تم تحديث صورة البروفايل بنجاح!');
+                closeModal('profileModal');
+            };
+            reader.readAsDataURL(fileInput.files[0]);
         }
     };
 
     window.updateProfileNickname = async function() {
-        const newShortNick = document.getElementById('settingsNicknameInput').value.trim();
-        const msgBox = document.getElementById('nickChangeMsg');
-        const currentGuild = localStorage.getItem('nexus_guild') || 'NONE';
-        const oldShortNick = localStorage.getItem('nexus_shortname') || '';
-
-        if (!newShortNick) {
-            alert('أدخل اللقب الجديد أولاً!');
-            return;
-        }
-
-        const lowerNick = newShortNick.toLowerCase();
-        if (EXCLUSIVE_OWNER_NAMES.includes(lowerNick) && myId !== OWNER_ID) {
-            msgBox.style.color = 'var(--danger)';
-            msgBox.innerText = 'هذا اللقب محجوز حصرياً للمالك!';
-            msgBox.style.display = 'block';
-            return;
-        }
-
-        if (forbiddenWords.some(word => lowerNick.includes(word))) {
-            msgBox.style.color = 'var(--danger)';
-            msgBox.innerText = 'هذا اللقب يحتوي على ألفاظ غير لائقة وممنوع!';
-            msgBox.style.display = 'block';
-            return;
-        }
-
-        if (currentGuild !== 'NONE') {
-            try {
-                const checkSnap = await get(ref(db, `guilds_registry/${currentGuild}/${newShortNick}`));
-                if (checkSnap.exists() && checkSnap.val() !== myId) {
-                    msgBox.style.color = 'var(--danger)';
-                    msgBox.innerText = `عفواً، لقب (${newShortNick}) مأخوذ بالفعل في نقابتك!`;
-                    msgBox.style.display = 'block';
-                    return;
-                }
-                if (oldShortNick && oldShortNick !== newShortNick) {
-                    await remove(ref(db, `guilds_registry/${currentGuild}/${oldShortNick}`));
-                }
-                await set(ref(db, `guilds_registry/${currentGuild}/${newShortNick}`), myId);
-            } catch (e) {}
-        }
-
-        const newFullNickname = (currentGuild !== 'NONE') ? `${newShortNick} (${currentGuild})` : newShortNick;
-
-        try {
-            await set(ref(db, `users_directory/${myId}/shortName`), newShortNick);
-            await set(ref(db, `users_directory/${myId}/nickname`), newFullNickname);
-
-            localStorage.setItem('nexus_shortname', newShortNick);
-            localStorage.setItem('nexus_nickname', newFullNickname);
-            savedShortName = newShortNick;
-            savedNickname = newFullNickname;
-
-            document.getElementById('userBadge').innerText = newFullNickname;
-            msgBox.style.color = 'var(--accent)';
-            msgBox.innerText = 'تم تغيير لقبك بنجاح!';
-            msgBox.style.display = 'block';
-        } catch (e) {
-            alert('حدث خطأ أثناء تحديث اللقب.');
-        }
+        const newNick = document.getElementById('settingsNicknameInput').value.trim();
+        if (!newNick) return alert('أدخل اللقب الجديد!');
+        savedNickname = newNick;
+        localStorage.setItem('nexus_nickname', savedNickname);
+        await set(ref(db, `users_directory/${myId}/nickname`), savedNickname);
+        document.getElementById('userBadge').innerText = savedNickname;
+        alert('تم تحديث اللقب بنجاح!');
+        closeModal('profileModal');
     };
 
-    window.submitUserReport = async function() {
-        const text = document.getElementById('reportTextContent').value.trim();
-        if (!text) {
-            alert('اكتب تفاصيل البلاغ أولاً!');
-            return;
-        }
-        try {
-            const reportId = 'rep_' + Math.random().toString(36).substring(2, 8);
-            await set(ref(db, `system_reports/${reportId}`), {
-                userId: myId,
-                nickname: localStorage.getItem('nexus_nickname'),
-                reportText: text,
-                timestamp: Date.now()
+    window.updatePassword = async function() {
+        const newPass = document.getElementById('settingsPasswordInput').value.trim();
+        if (!newPass) return alert('أدخل كلمة السر الجديدة!');
+        await set(ref(db, `users_directory/${myId}/password`), newPass);
+        alert('تم تحديث كلمة السر بنجاح!');
+        closeModal('profileModal');
+    };
+
+    window.submitReport = async function() {
+        const text = document.getElementById('reportText').value.trim();
+        if (!text) return alert('اكتب نص البلاغ أولاً!');
+        await push(ref(db, `guild_reports/${savedGuild !== 'NONE' ? savedGuild : 'global'}`), {
+            sender: savedNickname, text: text, timestamp: Date.now()
+        });
+        alert('تم إرسال البلاغ بنجاح!');
+        document.getElementById('reportText').value = '';
+        closeModal('settingsModal');
+    };
+
+    window.logoutUser = function() {
+        localStorage.clear();
+        location.reload();
+    };
+
+    // إنشاء نقابة جديدة + إشعار المالك/القائد
+    window.createNewGuild = async function() {
+        const name = document.getElementById('newGuildNameInput').value.trim();
+        const desc = document.getElementById('newGuildDescInput').value.trim();
+        if (!name) return alert('أدخل اسم النقابة!');
+
+        await set(ref(db, `approved_guilds/${name}`), { description: desc, leaderId: myId });
+        await set(ref(db, `guilds_registry/${name}/${savedNickname}`), myId);
+        await set(ref(db, `users_directory/${myId}/guild`), name);
+        await set(ref(db, `users_directory/${myId}/rank`), 'القائد');
+
+        // إشعار فوري بأن فلان أنشأ نقابة
+        await push(ref(db, `guild_creation_notifications/${OWNER_ID}`), {
+            creatorName: savedNickname, guildName: name, time: new Date().toLocaleTimeString()
+        });
+
+        localStorage.setItem('nexus_guild', name);
+        localStorage.setItem('nexus_rank', 'القائد');
+        alert(`تم إنشاء نقابة (${name}) بنجاح وأصبحت قائداً لها!`);
+        location.reload();
+    };
+
+    // الإشعارات اللحظية
+    async function loadRealtimeNotifications() {
+        const dot = document.getElementById('requestsBadgeDot');
+        const reqList = document.getElementById('requestsList');
+        reqList.innerHTML = '';
+        let totalCount = 0;
+
+        const msgReqSnap = await get(ref(db, `message_requests/${myId}`));
+        if (msgReqSnap.exists()) {
+            msgReqSnap.forEach(child => {
+                totalCount++;
+                const req = child.val();
+                reqList.innerHTML += `<div class="request-card"><span>طلب مراسلة من ${req.senderName}</span><button class="btn-accept" onclick="acceptMsgReq('${child.key}')">قبول</button></div>`;
             });
-            alert('تم إرسال بلاغك بنجاح إلى الإدارة. شكراً لمساعدتك!');
-            document.getElementById('reportTextContent').value = '';
-            closeModal('reportsModal');
-        } catch (e) {
-            alert('فشل إرسال البلاغ.');
+        }
+
+        // إشعارات إنشاء النقابات للمالك
+        if (myId === OWNER_ID) {
+            const notifSnap = await get(ref(db, `guild_creation_notifications/${OWNER_ID}`));
+            if (notifSnap.exists()) {
+                notifSnap.forEach(child => {
+                    totalCount++;
+                    const n = child.val();
+                    reqList.innerHTML += `<div class="request-card"><span>📢 العضو <b>${n.creatorName}</b> أنشأ نقابة جديدة: "${n.guildName}"</span><button class="btn-accept" onclick="removeGuildNotif('${child.key}')">تم</button></div>`;
+                });
+            }
+        }
+
+        if (totalCount > 0) {
+            dot.innerText = totalCount;
+            dot.style.display = 'inline-block';
+        } else {
+            dot.style.display = 'none';
+        }
+    }
+
+    window.removeGuildNotif = async function(key) {
+        await remove(ref(db, `guild_creation_notifications/${OWNER_ID}/${key}`));
+        loadRealtimeNotifications();
+    };
+
+    window.acceptMsgReq = async function(senderId) {
+        const chatId = [myId, senderId].sort().join('_');
+        await set(ref(db, `accepted_chats/${myId}/${senderId}`), { chatId });
+        await remove(ref(db, `message_requests/${myId}/${senderId}`));
+        alert('تم قبول المحادثة!');
+        loadRealtimeNotifications();
+        loadAcceptedChats();
+    };
+
+    async function logGuildActivity(guild, actionText) {
+        if (!guild || guild === 'NONE') return;
+        await push(ref(db, `guild_activity_logs/${guild}`), { text: actionText, time: new Date().toLocaleTimeString() });
+    }
+
+    async function loadGuildActivityLog(guild) {
+        if (!guild || guild === 'NONE') return;
+        const logSec = document.getElementById('activityLogSection');
+        const logList = document.getElementById('guildActivityLogList');
+        const snap = await get(ref(db, `guild_activity_logs/${guild}`));
+        if (snap.exists()) {
+            logSec.style.display = 'block';
+            logList.innerHTML = '';
+            snap.forEach(child => {
+                const log = child.val();
+                logList.innerHTML += `<div>• [${log.time}] ${log.text}</div>`;
+            });
+        }
+    }
+
+    window.openMembersModal = async function() {
+        openModal('membersModal');
+        const list = document.getElementById('guildMembersList');
+        list.innerHTML = 'جاري التحميل...';
+        const regSnap = await get(ref(db, `guilds_registry/${savedGuild}`));
+        list.innerHTML = '';
+        if (regSnap.exists()) {
+            regSnap.forEach(child => {
+                list.innerHTML += `<div class="request-card"><span>${child.key} (ID: ${child.val()})</span></div>`;
+            });
+        }
+        if (['القائد', 'نائب القائد', 'المستشار'].includes(myRank) || myId === OWNER_ID) {
+            document.getElementById('leaderMemberTools').style.display = 'block';
         }
     };
 
-    window.leaveCurrentGuild = async function() {
-        if (!confirm('هل أنت متأكد من مغادرة هذه النقابة؟')) return;
-        const currentGuild = localStorage.getItem('nexus_guild');
-        const shortName = localStorage.getItem('nexus_shortname');
+    window.kickGuildMember = async function() {
+        const targetId = document.getElementById('kickUserIdInput').value.trim();
+        if (!targetId) return alert('أدخل ID العضو!');
+        await set(ref(db, `users_directory/${targetId}/guild`), 'NONE');
+        logGuildActivity(savedGuild, `تم طرد العضو ذو الـ ID: ${targetId}`);
+        alert('تم طرد العضو بنجاح!');
+        closeModal('membersModal');
+    };
 
-        try {
-            await remove(ref(db, `guilds_registry/${currentGuild}/${shortName}`));
-            await set(ref(db, `users_directory/${myId}/guild`), 'NONE');
-            await set(ref(db, `users_directory/${myId}/rank`), 'مستقل');
-            await set(ref(db, `users_directory/${myId}/nickname`), shortName);
+    window.openGuildSettingsModal = function() {
+        if (!['القائد', 'نائب القائد', 'المستشار'].includes(myRank) && myId !== OWNER_ID) {
+            return alert('هذه الصلاحية للقيادة فقط!');
+        }
+        openModal('guildSettingsModal');
+    };
 
-            localStorage.setItem('nexus_guild', 'NONE');
-            localStorage.setItem('nexus_rank', 'مستقل');
-            localStorage.setItem('nexus_nickname', shortName);
-            savedGuild = 'NONE';
-            myRank = 'مستقل';
+    window.saveGuildSettings = async function() {
+        const newName = document.getElementById('editGuildNameInput').value.trim();
+        const newDesc = document.getElementById('editGuildDescInput').value.trim();
+        if (newName) {
+            await set(ref(db, `approved_guilds/${newName}`), { description: newDesc, leaderId: myId });
+            logGuildActivity(savedGuild, `تم تحديث بيانات النقابة.`);
+            alert('تم حفظ إعدادات النقابة!');
+            closeModal('guildSettingsModal');
+        }
+    };
 
-            alert('تم مغادرة النقابة بنجاح وأصبحت عضواً مستقلاً.');
-            showDashboard();
-        } catch (e) {
-            alert('حدث خطأ أثناء محاولة المغادرة.');
+    window.confirmDeleteGuild = async function() {
+        if (confirm('تأكيد صارم: هل تريد حذف النقابة نهائياً وتفكيكها؟')) {
+            await remove(ref(db, `approved_guilds/${savedGuild}`));
+            alert('تم حذف النقابة نهائياً.');
+            location.reload();
         }
     };
 
     window.openGuildsExplorer = async function() {
         openModal('guildsExplorerModal');
         const list = document.getElementById('availableGuildsList');
-        list.innerHTML = '<p style="font-size:13px; color:var(--text-muted);">جاري تحميل النقابات...</p>';
-
-        const currentGuild = localStorage.getItem('nexus_guild') || 'NONE';
-
-        try {
-            const snap = await get(ref(db, 'approved_guilds'));
-            list.innerHTML = '';
-
-            if (!snap.exists()) {
-                list.innerHTML = '<p style="font-size:13px;">لا توجد نقابات متاحة حالياً.</p>';
-                return;
-            }
-
-            snap.forEach((childSnap) => {
-                const gName = childSnap.key;
-                const gData = childSnap.val();
-                const isMyGuild = (currentGuild === gName);
-
-                const card = document.createElement('div');
-                card.className = 'request-card';
-                card.innerHTML = `
-                    <div style="flex:1; min-width:0; padding-left:8px;">
-                        <div style="font-weight:bold; color:var(--accent);">${gName}</div>
-                        <div style="font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${gData.description || 'نقابة معتمدة'}</div>
-                    </div>
-                    <div>
-                        ${isMyGuild 
-                            ? '<span style="font-size:11px; color:var(--accent); font-weight:bold;">عضو حالي ✓</span>' 
-                            : (myId === OWNER_ID 
-                                ? `<button class="btn-accept" onclick="forceJoinGuild('${gName}')">دخول فوري (مالك)</button>`
-                                : `<button class="btn-accept" onclick="sendGuildJoinRequest('${gName}')">طلب انضمام</button>`)}
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-        } catch (e) {
-            list.innerHTML = '<p style="color:var(--danger); font-size:13px;">فشل تحميل النقابات.</p>';
-        }
+        const snap = await get(ref(db, 'approved_guilds'));
+        list.innerHTML = '';
+        snap.forEach(child => {
+            list.innerHTML += `<div class="request-card"><span>${child.key}</span><button class="btn-accept" onclick="sendGuildJoinRequest('${child.key}')">طلب انضمام</button></div>`;
+        });
     };
 
-    window.forceJoinGuild = async function(targetGuild) {
-        try {
-            const shortName = localStorage.getItem('nexus_shortname') || 'Kakarot';
-            const newFullNick = `${shortName} (${targetGuild})`;
-
-            await set(ref(db, `guilds_registry/${targetGuild}/${shortName}`), myId);
-            await set(ref(db, `users_directory/${myId}/guild`), targetGuild);
-            await set(ref(db, `users_directory/${myId}/nickname`), newFullNick);
-            if (myId === OWNER_ID) {
-                await set(ref(db, `users_directory/${myId}/rank`), 'القائد');
-                localStorage.setItem('nexus_rank', 'القائد');
-            }
-
-            localStorage.setItem('nexus_guild', targetGuild);
-            localStorage.setItem('nexus_nickname', newFullNick);
-            savedGuild = targetGuild;
-
-            alert(`تم الدخول إلى نقابة (${targetGuild}) بنجاح بصلاحيات مالك النظام!`);
-            closeModal('guildsExplorerModal');
-            showDashboard();
-        } catch (e) {
-            alert('حدث خطأ أثناء الدخول للنقابة.');
-        }
+    window.sendGuildJoinRequest = async function(gName) {
+        await set(ref(db, `guild_join_requests/${gName}/${myId}`), { userId: myId, name: savedNickname });
+        logGuildActivity(gName, `قدم العضو ${savedNickname} طلب انضمام للنقابة.`);
+        alert('تم إرسال طلب الانضمام إلى قائد النقابة بنجاح!');
+        closeModal('guildsExplorerModal');
     };
 
-    window.sendGuildJoinRequest = async function(targetGuild) {
-        const shortName = localStorage.getItem('nexus_shortname') || localStorage.getItem('nexus_nickname');
-        try {
-            await set(ref(db, `guild_join_requests/${targetGuild}/${myId}`), {
-                userId: myId,
-                shortName: shortName,
-                nickname: localStorage.getItem('nexus_nickname'),
-                timestamp: Date.now()
-            });
-            alert(`تم إرسال طلب الانضمام إلى نقابة (${targetGuild}) بنجاح!`);
-            closeModal('guildsExplorerModal');
-        } catch (e) {
-            alert('حدث خطأ أثناء إرسال طلب الانضمام.');
-        }
-    };
-
-    async function loadJoinGuildRequests(guild) {
+    async function loadGuildManagement(guild) {
         if (!guild || guild === 'NONE') return;
-        try {
-            const snap = await get(ref(db, `guild_join_requests/${guild}`));
-            const container = document.getElementById('joinGuildRequestsList');
-            container.innerHTML = '';
-
-            if (!snap.exists()) return;
-
-            let hasItems = false;
-            snap.forEach((childSnap) => {
-                hasItems = true;
-                const req = childSnap.val();
-                const div = document.createElement('div');
-                div.className = 'request-card';
-                div.innerHTML = `
-                    <span>طلب انضمام للنقابة: <b>${req.shortName}</b> (${req.userId})</span>
-                    <div class="request-actions">
-                        <button class="btn-accept" onclick="approveJoinGuild('${guild}', '${req.userId}', '${req.shortName}')">قبول</button>
-                        <button class="btn-reject" onclick="rejectJoinGuild('${guild}', '${req.userId}')">رفض</button>
-                    </div>
-                `;
-                container.appendChild(div);
+        const adminSec = document.getElementById('adminPanelSection');
+        const joinList = document.getElementById('joinGuildRequestsList');
+        
+        const joinSnap = await get(ref(db, `guild_join_requests/${guild}`));
+        if (joinSnap.exists()) {
+            adminSec.style.display = 'block';
+            joinSnap.forEach(child => {
+                const req = child.val();
+                joinList.innerHTML += `<div class="request-card"><span>طلب انضمام: ${req.name}</span><button class="btn-accept" onclick="approveJoin('${guild}', '${req.userId}', '${req.name}')">قبول</button></div>`;
             });
-            if (hasItems) {
-                document.getElementById('adminPanelSection').style.display = 'block';
-            }
-        } catch (e) {}
+        }
     }
 
-    window.approveJoinGuild = async function(guild, targetUserId, targetShortName) {
-        try {
-            let finalShortName = targetShortName;
-            const nickCheck = await get(ref(db, `guilds_registry/${guild}/${targetShortName}`));
-            if (nickCheck.exists() && nickCheck.val() !== targetUserId) {
-                finalShortName = `${targetShortName}_${Math.floor(10 + Math.random() * 90)}`;
-            }
-
-            const newFullNick = `${finalShortName} (${guild})`;
-
-            await set(ref(db, `guilds_registry/${guild}/${finalShortName}`), targetUserId);
-            await set(ref(db, `users_directory/${targetUserId}/guild`), guild);
-            await set(ref(db, `users_directory/${targetUserId}/shortName`), finalShortName);
-            await set(ref(db, `users_directory/${targetUserId}/nickname`), newFullNick);
-            await set(ref(db, `users_directory/${targetUserId}/rank`), 'المبتدئ');
-
-            await remove(ref(db, `guild_join_requests/${guild}/${targetUserId}`));
-            alert(`تم قبول انضمام (${finalShortName}) إلى نقابة ${guild} بنجاح!`);
-            loadJoinGuildRequests(guild);
-        } catch (e) {
-            alert('حدث خطأ أثناء قبول العضو.');
-        }
+    window.approveJoin = async function(guild, userId, name) {
+        await set(ref(db, `users_directory/${userId}/guild`), guild);
+        await set(ref(db, `users_directory/${userId}/rank`), 'المبتدئ');
+        await set(ref(db, `guilds_registry/${guild}/${name}`), userId);
+        await remove(ref(db, `guild_join_requests/${guild}/${userId}`));
+        logGuildActivity(guild, `تم قبول انضمام العضو ${name} للنقابة.`);
+        alert('تم قبول العضو!');
+        location.reload();
     };
 
-    window.rejectJoinGuild = async function(guild, targetUserId) {
-        await remove(ref(db, `guild_join_requests/${guild}/${targetUserId}`));
-        alert('تم رفض طلب الانضمام.');
-        loadJoinGuildRequests(guild);
-    };
-
-    async function loadGuildMembersForManagement(guild) {
+    async function checkAdminRoom(guild) {
         if (!guild || guild === 'NONE') return;
-        try {
-            const snap = await get(ref(db, `guilds_registry/${guild}`));
-            const listContainer = document.getElementById('guildMembersList');
-            listContainer.innerHTML = '';
-
-            if (!snap.exists()) {
-                listContainer.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">لا توجد أعضاء مسجلين في سجل النقابة.</div>';
-                return;
-            }
-
-            snap.forEach((childSnap) => {
-                const memberNick = childSnap.key;
-                const memberId = childSnap.val();
-
-                if (memberId === myId && myId !== OWNER_ID) return;
-
-                const div = document.createElement('div');
-                div.className = 'request-card';
-                div.style.padding = '5px 10px';
-                div.innerHTML = `
-                    <span style="font-size:12px;"><b>${memberNick}</b> (${memberId})</span>
-                    <div style="display:flex; gap:4px;">
-                        ${myId === OWNER_ID ? `<button onclick="grantFullPermissions('${memberId}')" style="background:var(--accent); color:#121212; border:none; padding:3px 6px; border-radius:4px; font-size:10px; cursor:pointer;" title="منح نفس صلاحياتي المطلقة">تفويض صلاحيات</button>` : ''}
-                        <button class="btn-reject" onclick="kickMember('${guild}', '${memberId}', '${memberNick}')" style="padding:3px 8px; font-size:11px;">طرد</button>
-                    </div>
-                `;
-                listContainer.appendChild(div);
-            });
-        } catch (e) {}
-    }
-
-    window.grantFullPermissions = async function(targetUserId) {
-        if (!confirm('هل أنت متأكد من منح هذا العضو نفس صلاحياتك القيادية المطلقة (القائد الأعلى)؟')) return;
-        try {
-            await set(ref(db, `users_directory/${targetUserId}/rank`), 'القائد');
-            alert('تم تفويض العضو ومنحه نفس الصلاحيات المطلقة بنجاح!');
-        } catch (e) {
-            alert('فشل تفويض الصلاحيات.');
-        }
-    };
-
-    window.kickMember = async function(guild, targetId, targetNick) {
-        if (!confirm(`هل أنت متأكد من طرد العضو (${targetNick}) من النقابة؟`)) return;
-        try {
-            await remove(ref(db, `guilds_registry/${guild}/${targetNick}`));
-            await set(ref(db, `users_directory/${targetId}/guild`), 'NONE');
-            await set(ref(db, `users_directory/${targetId}/rank`), 'مستقل');
-            const userSnap = await get(ref(db, `users_directory/${targetId}/shortName`));
-            if (userSnap.exists()) {
-                await set(ref(db, `users_directory/${targetId}/nickname`), userSnap.val());
-            }
-            alert(`تم طرد العضو (${targetNick}) بنجاح.`);
-            loadGuildMembersForManagement(guild);
-        } catch (e) {
-            alert('حدث خطأ أثناء محاولة الطرد.');
-        }
-    };
-
-    document.getElementById('btnSendGuildReq').onclick = async () => {
-        const name = document.getElementById('reqGuildName').value.trim();
-        const desc = document.getElementById('reqGuildDesc').value.trim();
-        const avatarFile = document.getElementById('reqGuildAvatarFile').files[0];
-
-        if (!name) {
-            alert('أدخل اسم النقابة المطلوبة!');
-            return;
-        }
-
-        let avatarBase64 = '';
-        if (avatarFile) {
-            try { avatarBase64 = await convertFileToBase64(avatarFile); } catch (e) {}
-        }
-
-        const reqId = 'req_' + Math.random().toString(36).substring(2, 8);
-        await set(ref(db, `guild_requests/${reqId}`), {
-            name: name,
-            description: desc,
-            avatar: avatarBase64,
-            requesterId: myId
-        });
-
-        alert('تم إرسال طلب إنشاء النقابة إلى المالك بنجاح!');
-        closeModal('requestGuildModal');
-    };
-
-    document.getElementById('btnSaveGuildEdit').onclick = async () => {
-        const newName = document.getElementById('editGuildNameInput').value.trim();
-        const newDesc = document.getElementById('editGuildDescInput').value.trim();
-        const avatarFile = document.getElementById('editGuildAvatarFile').files[0];
-        const currentGuild = localStorage.getItem('nexus_guild');
-
-        let avatarBase64 = '';
-        if (avatarFile) {
-            try { avatarBase64 = await convertFileToBase64(avatarFile); } catch (e) {}
-        }
-
-        try {
-            const guildRef = ref(db, `approved_guilds/${currentGuild}`);
-            const curSnap = await get(guildRef);
-            let curData = curSnap.exists() ? curSnap.val() : {};
-
-            await set(guildRef, {
-                avatar: avatarBase64 || curData.avatar || '',
-                description: newDesc || curData.description || '',
-                leaderId: curData.leaderId || myId
-            });
-
-            alert('تم تعديل بيانات النقابة بنجاح!');
-            closeModal('editGuildModal');
-        } catch (e) {
-            alert('حدث خطأ أثناء تعديل النقابة.');
-        }
-    };
-
-    document.getElementById('btnSendPromoReq').onclick = async () => {
-        const targetRank = document.getElementById('targetRankSelect').value;
-        const guild = localStorage.getItem('nexus_guild');
-
-        const promoReqId = 'promo_' + Math.random().toString(36).substring(2, 8);
-        await set(ref(db, `promotion_requests/${guild}/${promoReqId}`), {
-            userId: myId,
-            nickname: localStorage.getItem('nexus_nickname'),
-            targetRank: targetRank
-        });
-
-        alert(`تم إرسال طلب الترقية إلى رتبة (${targetRank}) للقائد بنجاح!`);
-        closeModal('promotionModal');
-    };
-
-    document.getElementById('btnSendInvite').onclick = async () => {
-        const targetId = document.getElementById('inviteTargetId').value.trim();
-        const days = parseInt(document.getElementById('inviteDuration').value);
-
-        if (!targetId) {
-            alert('أدخل ID المستخدم المستهدف بالزيارة!');
-            return;
-        }
-
-        const expiryTime = Date.now() + (days * 24 * 60 * 60 * 1000);
-        const guild = localStorage.getItem('nexus_guild');
-
-        await set(ref(db, `visit_invites/${targetId}/${guild}`), {
-            guild: guild,
-            expiresAt: expiryTime,
-            inviter: localStorage.getItem('nexus_nickname')
-        });
-
-        alert(`تم إرسال دعوة زيارة لمدة ${days} يوم للمستخدم بنجاح!`);
-        closeModal('visitInviteModal');
-    };
-
-    async function checkIfAdminOrOwner(guild) {
-        if (!guild || guild === 'NONE') return;
-        if (myId === OWNER_ID || myRank === 'القائد' || myRank === 'نائب القائد' || myRank === 'المستشار') {
+        if (['القائد', 'نائب القائد', 'المستشار'].includes(myRank) || myId === OWNER_ID) {
             document.getElementById('adminsRoomItem').style.display = 'flex';
-            return;
         }
     }
-
-    async function loadGuildRequestsForOwner() {
-        try {
-            const reqSnap = await get(ref(db, 'guild_requests'));
-            const section = document.getElementById('adminPanelSection');
-            const list = document.getElementById('guildRequestsList');
-            list.innerHTML = '';
-
-            if (!reqSnap.exists()) return;
-
-            let hasItems = false;
-            reqSnap.forEach((childSnap) => {
-                hasItems = true;
-                const reqId = childSnap.key;
-                const reqData = childSnap.val();
-
-                const div = document.createElement('div');
-                div.classList.add('request-card');
-                div.innerHTML = `
-                    <span>إنشاء نقابة: <b>${reqData.name}</b></span>
-                    <div class="request-actions">
-                        <button class="btn-accept" onclick="approveGuild('${reqId}', '${reqData.name}', '${reqData.avatar || ''}', '${reqData.description || ''}', '${reqData.requesterId}')">موافقة</button>
-                        <button class="btn-reject" onclick="rejectGuild('${reqId}')">رفض</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-            if (hasItems) section.style.display = 'block';
-        } catch (e) {}
-    }
-
-    async function loadPromotionRequestsForLeader(guild) {
-        if (!guild || guild === 'NONE') return;
-        try {
-            const promoSnap = await get(ref(db, `promotion_requests/${guild}`));
-            const promoList = document.getElementById('promotionRequestsList');
-            promoList.innerHTML = '';
-
-            if (!promoSnap.exists()) return;
-
-            promoSnap.forEach((childSnap) => {
-                const promoId = childSnap.key;
-                const promoData = childSnap.val();
-
-                const div = document.createElement('div');
-                div.classList.add('request-card');
-                div.innerHTML = `
-                    <span>طلب ترقية: <b>${promoData.nickname}</b> إلى [${promoData.targetRank}]</span>
-                    <div class="request-actions">
-                        <button class="btn-accept" onclick="approvePromotion('${promoId}', '${promoData.userId}', '${promoData.targetRank}', '${guild}')">ترقية</button>
-                        <button class="btn-reject" onclick="rejectPromotion('${promoId}', '${guild}')">رفض</button>
-                    </div>
-                `;
-                promoList.appendChild(div);
-            });
-        } catch (e) {}
-    }
-
-    window.directPromoteUser = async function() {
-        const targetUserId = document.getElementById('directUserIdInput').value.trim();
-        const newRank = document.getElementById('directRankSelect').value;
-
-        if (!targetUserId) {
-            alert('أدخل ID العضو أولاً!');
-            return;
-        }
-
-        await set(ref(db, `users_directory/${targetUserId}/rank`), newRank);
-        alert(`تمت ترقية العضو المباشرة إلى (${newRank}) بنجاح!`);
-        document.getElementById('directUserIdInput').value = '';
-    };
-
-    window.approvePromotion = async function(promoId, userId, targetRank, guild) {
-        await set(ref(db, `users_directory/${userId}/rank`), targetRank);
-        await remove(ref(db, `promotion_requests/${guild}/${promoId}`));
-        alert(`تمت ترقية العضو بنجاح إلى رتبة (${targetRank})!`);
-        loadPromotionRequestsForLeader(guild);
-    };
-
-    window.rejectPromotion = async function(promoId, guild) {
-        await remove(ref(db, `promotion_requests/${guild}/${promoId}`));
-        alert('تم رفض طلب الترقية.');
-        loadPromotionRequestsForLeader(guild);
-    };
-
-    window.approveGuild = async function(reqId, guildName, guildAvatar, guildDesc, requesterId) {
-        await set(ref(db, `approved_guilds/${guildName}`), {
-            avatar: guildAvatar,
-            description: guildDesc,
-            leaderId: requesterId,
-            createdDate: Date.now()
-        });
-        if (requesterId && requesterId !== 'guest') {
-            const reqUserSnap = await get(ref(db, `users_directory/${requesterId}`));
-            if (reqUserSnap.exists()) {
-                const uData = reqUserSnap.val();
-                const sName = uData.shortName || uData.nickname;
-                await set(ref(db, `guilds_registry/${guildName}/${sName}`), requesterId);
-                await set(ref(db, `users_directory/${requesterId}/guild`), guildName);
-                await set(ref(db, `users_directory/${requesterId}/nickname`), `${sName} (${guildName})`);
-                await set(ref(db, `users_directory/${requesterId}/rank`), 'القائد');
-            }
-        }
-        await remove(ref(db, `guild_requests/${reqId}`));
-        alert(`تمت الموافقة على نقابة ${guildName} وتعيين منشئها قائداً لها!`);
-        loadGuildRequestsForOwner();
-    };
-
-    window.rejectGuild = async function(reqId) {
-        await remove(ref(db, `guild_requests/${reqId}`));
-        alert('تم رفض طلب النقابة.');
-        loadGuildRequestsForOwner();
-    };
-
-    document.getElementById('btnAdminPanel').onclick = function() {
-        const sec = document.getElementById('adminPanelSection');
-        sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
-    };
 
     let currentRoomId = null;
     let activeChatPath = null;
-
-    document.getElementById('btnBackToDashboard').onclick = closeRoom;
+    document.getElementById('btnBackToDashboard').onclick = () => { document.getElementById('chatRoomView').style.display = 'none'; document.getElementById('mainDashboard').style.display = 'flex'; };
     document.getElementById('btnSendRoomMsg').onclick = sendRoomMessage;
 
-    window.openRoom = async function(roomId, roomName, targetGuild = null) {
-        const myGuild = localStorage.getItem('nexus_guild') || 'NONE';
-        const activeGuild = targetGuild || myGuild;
-
-        if (roomId !== 'saved_messages' && !roomId.includes('_')) {
-            if (activeGuild === 'NONE') {
-                alert('يجب أن تنضم إلى نقابة أولاً للدخول إلى غرف النقابات!');
-                return;
-            }
-            if (activeGuild !== myGuild && myId !== OWNER_ID) {
-                try {
-                    const inviteSnap = await get(ref(db, `visit_invites/${myId}/${activeGuild}`));
-                    if (!inviteSnap.exists()) {
-                        alert('عفواً، لا يمكنك دخول هذه النقابة إلا بوجود دعوة زيارة سارية من أحد قادتها!');
-                        return;
-                    }
-                    const inviteData = inviteSnap.val();
-                    if (Date.now() > inviteData.expiresAt) {
-                        alert('انتهت صلاحية دعوة الزيارة لهذه النقابة!');
-                        await remove(ref(db, `visit_invites/${myId}/${activeGuild}`));
-                        return;
-                    }
-                } catch (e) {}
-            }
-        }
-
+    window.openRoom = function(roomId, roomName) {
         currentRoomId = roomId;
         document.getElementById('mainDashboard').style.display = 'none';
         document.getElementById('chatRoomView').style.display = 'flex';
-        document.getElementById('roomTitleName').innerText = (roomId === 'saved_messages' || roomId.includes('_')) 
-            ? roomName 
-            : `${roomName} (${activeGuild})`;
+        document.getElementById('roomTitleName').innerText = roomName;
 
-        loadMessages(roomId, activeGuild);
-    };
-
-    function closeRoom() {
-        document.getElementById('chatRoomView').style.display = 'none';
-        document.getElementById('mainDashboard').style.display = 'flex';
-    }
-
-    function loadMessages(roomId, guildName) {
+        let path = roomId === 'global' ? `chats/${savedGuild}/global` :
+                   roomId === 'announcements' ? `chats/${savedGuild}/announcements` :
+                   roomId === 'admins' ? `chats/${savedGuild}/admins` :
+                   roomId === 'saved_messages' ? `personal_notes/${myId}` : `private_chats/${roomId}`;
+        
+        activeChatPath = path;
         const box = document.getElementById('roomMessagesBox');
         box.innerHTML = '';
-
-        let chatPath = '';
-        if (roomId === 'global') {
-            chatPath = `chats/${guildName}/global`;
-        } else if (roomId === 'announcements') {
-            chatPath = `chats/${guildName}/announcements`;
-        } else if (roomId === 'work') {
-            chatPath = `chats/${guildName}/work`;
-        } else if (roomId === 'admins') {
-            chatPath = `chats/${guildName}/admins`;
-        } else if (roomId === 'saved_messages') {
-            chatPath = `personal_notes/${myId}`;
-        } else {
-            chatPath = `private_chats/${roomId}`;
-        }
-
-        activeChatPath = chatPath;
-        const roomRef = ref(db, chatPath);
-
-        onChildAdded(roomRef, (snapshot) => {
-            const data = snapshot.val();
-            const bubble = document.createElement('div');
-            bubble.classList.add('message-bubble');
-            if (data.senderId === myId) bubble.classList.add('my-msg');
-
-            bubble.innerHTML = `<b>${data.sender}:</b> ${data.text}`;
-            box.appendChild(bubble);
+        onChildAdded(ref(db, path), (snap) => {
+            const data = snap.val();
+            box.innerHTML += `<div class="message-bubble ${data.senderId === myId ? 'my-msg' : ''}"><b>${data.sender}:</b> ${data.text}</div>`;
             box.scrollTop = box.scrollHeight;
         });
-    }
+    };
 
     function sendRoomMessage() {
         const input = document.getElementById('roomMessageInput');
-        const text = input.value.trim();
-        if (!text || !activeChatPath) return;
-
-        const roomRef = ref(db, activeChatPath);
-
-        push(roomRef, {
-            text: text,
-            sender: localStorage.getItem('nexus_nickname'),
-            senderId: myId,
-            timestamp: Date.now()
-        });
-
-        if (currentRoomId === 'global') {
-            let currentCount = parseInt(localStorage.getItem('nexus_today_msgs') || '0') + 1;
-            localStorage.setItem('nexus_today_msgs', currentCount.toString());
-            const badge = document.getElementById('todayMsgCount');
-            if (badge) badge.innerText = `(رسائل اليوم: ${currentCount})`;
-        }
-
-        input.value = "";
+        if (!input.value.trim() || !activeChatPath) return;
+        push(ref(db, activeChatPath), { text: input.value.trim(), sender: savedNickname, senderId: myId });
+        input.value = '';
     }
 
-    window.handleRoomKeyPress = function(event) {
-        if (event.key === 'Enter') {
-            sendRoomMessage();
-        }
-    };
+    window.handleRoomKeyPress = (e) => { if (e.key === 'Enter') sendRoomMessage(); };
 
-    window.sendChatRequest = async function(targetUserId, targetName) {
-        await set(ref(db, `message_requests/${targetUserId}/${myId}`), {
-            senderId: myId,
-            senderName: localStorage.getItem('nexus_nickname'),
-            senderAvatar: localStorage.getItem('nexus_avatar'] || ''
-        });
-        alert(`تم إرسال طلب المراسلة إلى ${targetName} بنجاح!`);
-        document.getElementById('searchInput').value = '';
-        document.getElementById('searchResultsSection').style.display = 'none';
-    };
-
-    async function loadRequests() {
-        try {
-            const reqRef = ref(db, `message_requests/${myId}`);
-            const snapshot = await get(reqRef);
-            const section = document.getElementById('requestsSection');
-            const list = document.getElementById('requestsList');
-            list.innerHTML = '';
-
-            let hasContent = false;
-
-            if (snapshot.exists()) {
-                hasContent = true;
-                snapshot.forEach((childSnap) => {
-                    const req = childSnap.val();
-                    const senderId = req.senderId;
-
-                    const div = document.createElement('div');
-                    div.classList.add('request-card');
-                    div.innerHTML = `
-                        <span>${req.senderName} يريد مراسلتك</span>
-                        <div class="request-actions">
-                            <button class="btn-accept" onclick="acceptRequest('${senderId}', '${req.senderName}')">قبول</button>
-                            <button class="btn-reject" onclick="rejectRequest('${senderId}')">رفض</button>
-                        </div>
-                    `;
-                    list.appendChild(div);
-                });
-            }
-
-            section.style.display = hasContent ? 'block' : 'none';
-        } catch (e) {}
-    }
-
-    window.acceptRequest = async function(senderId, senderName) {
-        const chatId = [myId, senderId].sort().join('_');
-        await set(ref(db, `accepted_chats/${myId}/${senderId}`), { name: senderName, chatId: chatId });
-        await set(ref(db, `accepted_chats/${senderId}/${myId}`), { name: localStorage.getItem('nexus_nickname'), chatId: chatId });
-        
-        await remove(ref(db, `message_requests/${myId}/${senderId}`));
-        alert('تم قبول الطلب وبدء المحادثة!');
-        loadRequests();
-        loadAcceptedChats();
-    };
-
-    window.rejectRequest = async function(senderId) {
-        await remove(ref(db, `message_requests/${myId}/${senderId}`));
-        loadRequests();
-    };
-
-    async function loadAcceptedChats() {
-        try {
-            const chatsRef = ref(db, `accepted_chats/${myId}`);
-            const snapshot = await get(chatsRef);
-            const list = document.getElementById('acceptedChatsList');
-            list.innerHTML = '';
-
-            if (!snapshot.exists()) return;
-
-            snapshot.forEach((childSnap) => {
-                const chat = childSnap.val();
-                const item = document.createElement('div');
-                item.classList.add('chat-item');
-                item.innerHTML = `
-                    <div class="avatar-container" style="margin-left:12px;">
-                        <div class="avatar" style="width:38px; height:38px; font-size:15px;">${chat.name[0]}</div>
-                    </div>
-                    <div class="chat-info">
-                        <div class="chat-name">${chat.name}</div>
-                        <div class="chat-last-msg">محادثة خاصة</div>
-                    </div>
-                `;
-                item.onclick = () => openRoom(chat.chatId, `محادثة خاصة مع ${chat.name}`);
-                list.appendChild(item);
-            });
-        } catch (e) {}
-    }
-
-    window.searchUsersById = async function(query) {
-        const section = document.getElementById('searchResultsSection');
+    window.searchUsersById = async function(q) {
+        const sec = document.getElementById('searchResultsSection');
         const list = document.getElementById('searchResultsList');
         list.innerHTML = '';
-
-        const cleanId = query.trim();
-        if (!cleanId || cleanId === myId) {
-            section.style.display = 'none';
-            return;
+        if (!q.trim() || q.trim() === myId) { sec.style.display = 'none'; return; }
+        const snap = await get(ref(db, `users_directory/${q.trim()}`));
+        if (snap.exists()) {
+            const u = snap.val();
+            list.innerHTML = `<div class="request-card"><span>${u.nickname} (${u.userId})</span><button class="btn-accept" onclick="sendMsgReq('${u.userId}')">مراسلة</button></div>`;
+            sec.style.display = 'block';
         }
-
-        try {
-            const userSnap = await get(ref(db, `users_directory/${cleanId}`));
-            if (!userSnap.exists()) {
-                section.style.display = 'none';
-                return;
-            }
-
-            const user = userSnap.val();
-            const item = document.createElement('div');
-            item.classList.add('chat-item');
-            item.style.padding = '8px 10px';
-            
-            let avHtml = user.avatar ? `<img src="${user.avatar}">` : (user.shortName ? user.shortName[0] : user.nickname[0]);
-            let onlineDotHtml = user.isOnline ? '<div class="online-dot" style="bottom:0; left:0;"></div>' : '';
-
-            item.innerHTML = `
-                <div class="avatar-container" style="margin-left:10px;">
-                    <div class="avatar" style="width:35px;height:35px;font-size:14px;">${avHtml}</div>
-                    ${onlineDotHtml}
-                </div>
-                <div class="chat-info">
-                    <div class="chat-name" style="font-size:14px;">${user.nickname}</div>
-                    <div class="chat-last-msg" style="font-size:11px; color:var(--accent);">اضغط لإرسال طلب مراسلة (${user.userId})</div>
-                </div>
-            `;
-            item.onclick = () => sendChatRequest(user.userId, user.nickname);
-            list.appendChild(item);
-            section.style.display = 'block';
-        } catch (e) {}
     };
+
+    window.sendMsgReq = async function(targetId) {
+        await set(ref(db, `message_requests/${targetId}/${myId}`), { senderId: myId, senderName: savedNickname });
+        alert('تم إرسال طلب المراسلة!');
+    };
+
+    // تحميل المحادثات الخاصة مع إظهار "اسم الشخص الذي تكلمه بوضوح من بره"
+    async function loadAcceptedChats() {
+        const snap = await get(ref(db, `accepted_chats/${myId}`));
+        const list = document.getElementById('acceptedChatsList');
+        list.innerHTML = '';
+        if (snap.exists()) {
+            snap.forEach(async child => {
+                const chatId = child.val().chatId;
+                const otherUserId = chatId.split('_').find(id => id !== myId);
+                let partnerName = "محادثة خاصة";
+                if (otherUserId) {
+                    const userSnap = await get(ref(db, `users_directory/${otherUserId}`));
+                    if (userSnap.exists()) {
+                        partnerName = userSnap.val().nickname;
+                    }
+                }
+                list.innerHTML += `
+                    <div class="chat-item" onclick="openRoom('${chatId}', 'محادثة خاصة مع ${partnerName}')">
+                        <div class="avatar">💬</div>
+                        <div class="chat-info">
+                            <div class="chat-name">${partnerName}</div>
+                            <div class="chat-last-msg">انقر لفتح المحادثة الآمنة</div>
+                        </div>
+                    </div>`;
+            });
+        }
+    }
 </script>
 
 </body>
