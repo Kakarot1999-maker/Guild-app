@@ -192,6 +192,16 @@
         .bg-swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 8px 0 12px; }
         .swatch { height: 38px; border-radius: 8px; border: 2px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-muted); box-sizing: border-box; }
         .swatch.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+
+        .chat-meta { display:flex; flex-direction:column; align-items:center; gap:5px; margin-right:8px; flex-shrink:0; }
+        .chat-time { font-size:11px; color:var(--text-muted); }
+        .chat-item.has-unread .chat-time { color:#00a884; }
+        .chat-item.has-unread .chat-name, .chat-item.has-unread .chat-last-msg { font-weight:bold; color:var(--text-main); }
+        .unread-badge { background:#00a884; color:#fff; font-size:11px; font-weight:bold; min-width:20px; height:20px; border-radius:10px; padding:0 6px; display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
+        #notifBanner { display:none; padding:10px 15px; background:var(--bg-sec); color:var(--accent); font-size:13px; font-weight:bold; text-align:center; cursor:pointer; flex-shrink:0; }
+        #toastBox { position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:6px; width:92%; max-width:380px; pointer-events:none; }
+        .toast { pointer-events:auto; background:var(--bg-panel); border:1px solid var(--accent); color:var(--text-main); border-radius:10px; padding:10px 12px; font-size:13px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.35); }
+        .toast b { color:var(--accent); display:block; margin-bottom:2px; }
     </style>
 </head>
 <body>
@@ -453,6 +463,8 @@
         </div>
     </div>
 
+    <div id="toastBox"></div>
+
     <!-- لوحة التحكم الرئيسية -->
     <div id="mainDashboard" style="display: none; flex-direction: column; height: 100%; width: 100%;">
         <div class="chat-header">
@@ -480,6 +492,8 @@
             <h4 style="margin: 0 0 8px 0; font-size: 13px; color: var(--accent);">نتيجة البحث:</h4>
             <div id="searchResultsList"></div>
         </div>
+
+        <div id="notifBanner">🔔 اضغط هنا لتفعيل إشعارات الرسائل</div>
 
         <div id="pullToRefreshIndicator">🔄 جاري تحديث الواجهة...</div>
 
@@ -540,7 +554,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import {
         getDatabase, ref, set, get, push, update, remove,
-        onChildAdded, onChildChanged, onChildRemoved, onDisconnect
+        onChildAdded, onChildChanged, onChildRemoved, onDisconnect, onValue, increment
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -684,15 +698,29 @@
         if (onTap) el.addEventListener('click', onTap);
     }
 
-    function buildChatItem({ avatarUrl, fallback, name, sub, online, bg }) {
+    function fmtTime(ts) {
+        const d = new Date(ts);
+        return d.toDateString() === new Date().toDateString()
+            ? d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+            : d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
+    }
+
+    function buildChatItem({ avatarUrl, fallback, name, sub, online, bg, time, unread }) {
         const av = h('div', { class: 'avatar' });
         if (bg) av.style.background = bg;
         setAvatarContent(av, avatarUrl, fallback);
         if (online !== undefined) av.appendChild(h('div', { class: 'online-indicator' + (online ? ' active' : '') }));
-        return h('div', { class: 'chat-item' }, av,
+        const item = h('div', { class: 'chat-item' + (unread ? ' has-unread' : '') }, av,
             h('div', { class: 'chat-info' },
                 h('div', { class: 'chat-name' }, name),
                 h('div', { class: 'chat-last-msg' }, sub)));
+        if (time || unread) {
+            const meta = h('div', { class: 'chat-meta' });
+            if (time) meta.appendChild(h('div', { class: 'chat-time' }, fmtTime(time)));
+            if (unread) meta.appendChild(h('div', { class: 'unread-badge' }, unread > 99 ? '99+' : String(unread)));
+            item.appendChild(meta);
+        }
+        return item;
     }
 
     // نافذة الحالة: ✓ للصح / ✗ للخطأ (بترجع Promise بتتحل لما المستخدم يضغط "حسناً")
@@ -894,7 +922,8 @@
 
         setupPresence();
         loadChatBg();
-        loadRealtimeNotifications();
+        initNotifBanner();
+        startNotifications();
         loadAcceptedChats();
         loadGroupsList();
     }
@@ -1368,36 +1397,50 @@
         }
     };
 
-    async function loadGroupsList() {
-        const container = $('groupsListContainer');
-        const ugSnap = await get(ref(db, `user_groups/${myId}`));
-        const ids = ugSnap.exists() ? Object.keys(ugSnap.val()) : [];
-        const grpSnaps = await Promise.all(ids.map(id => get(ref(db, `groups/${id}`))));
-        const items = [];
-        for (const s of grpSnaps) {
-            if (!s.exists()) continue;
-            const grp = s.val();
-            const item = buildChatItem({
-                avatarUrl: grp.avatar, fallback: '👥', name: grp.name,
-                sub: grp.description || 'جروب تفاعلي', bg: '#1f2c34'
-            });
+    // ================= قائمة الشاتات (خاص + جروبات) مرتبة بآخر رسالة =================
+    let privCache = [], grpCache = [], inbox = {};
+    const roomIsOpen = (id) => id === currentRoomId && $('chatRoomView').style.display === 'flex';
+
+    function renderChatList() {
+        const all = [...privCache, ...grpCache]
+            .map((c) => { const ib = inbox[c.id]; return { c, ib, ts: Math.max(c.time || 0, ib?.ts || 0) }; })
+            .sort((a, b) => b.ts - a.ts);
+        let total = 0;
+        const items = all.map(({ c, ib }) => {
+            const unread = roomIsOpen(c.id) ? 0 : (ib?.unread || 0);
+            total += unread;
+            let sub = c.type === 'group' ? (c.desc || 'جروب تفاعلي') : `ID: ${c.partnerId}`;
+            if (ib?.text) sub = (ib.senderId === myId ? 'أنت: ' : (c.type === 'group' ? `${ib.sender}: ` : '')) + ib.text;
+            const item = buildChatItem(c.type === 'group'
+                ? { avatarUrl: c.avatar, fallback: '👥', name: c.name, sub, bg: '#1f2c34', time: ib?.ts, unread }
+                : { avatarUrl: c.avatar, fallback: c.hasUser ? firstChar(c.name) : '💬', name: c.name, sub, time: ib?.ts, unread });
             attachLongPress(item,
-                () => showChatOptions(grp.id, grp.name, 'group', grp.id),
-                () => openRoom(grp.id, grp.name, 'group'));
-            items.push(item);
-        }
-        container.replaceChildren(...items);
+                () => showChatOptions(c.id, c.name, c.type, c.type === 'group' ? c.id : c.key, c.partnerId || null),
+                () => openRoom(c.id, c.name, c.type, c.partnerId || null));
+            return item;
+        });
+        $('groupsListContainer').replaceChildren();
+        $('acceptedChatsList').replaceChildren(...items);
+        document.title = (total ? `(${total}) ` : '') + 'Z-Chat - التطبيق المتطور';
+    }
+
+    async function loadGroupsList() {
+        const ugSnap = await get(ref(db, `user_groups/${myId}`));
+        const ug = ugSnap.exists() ? ugSnap.val() : {};
+        const snaps = await Promise.all(Object.keys(ug).map((id) => get(ref(db, `groups/${id}`))));
+        grpCache = snaps.filter((s) => s.exists()).map((s) => {
+            const g = s.val();
+            return { id: s.key, type: 'group', name: g.name, avatar: g.avatar, desc: g.description, time: ug[s.key]?.timestamp || 0 };
+        });
+        renderChatList();
     }
 
     async function loadAcceptedChats() {
-        const list = $('acceptedChatsList');
         const snap = await get(ref(db, `accepted_chats/${myId}`));
-        if (!snap.exists()) { list.replaceChildren(); return; }
-
+        if (!snap.exists()) { privCache = []; renderChatList(); return; }
         const chats = Object.entries(snap.val()).map(([key, v]) => ({
-            chatKey: key, chatId: v.chatId, partnerId: v.partnerId || key, time: v.timestamp || 0
-        })).sort((a, b) => b.time - a.time);
-
+            key, id: v.chatId, partnerId: v.partnerId || key, time: v.timestamp || 0
+        }));
         const rows = await Promise.all(chats.map(async (c) => {
             const [blk, us] = await Promise.all([
                 get(ref(db, `blocked_chats/${myId}/${c.partnerId}`)),
@@ -1405,21 +1448,108 @@
             ]);
             return { c, blocked: blk.exists(), user: us.exists() ? us.val() : null };
         }));
+        privCache = rows.filter((r) => !r.blocked).map(({ c, user }) => ({
+            ...c, type: 'private', name: user?.nickname || 'محادثة خاصة', avatar: user?.avatar, hasUser: !!user
+        }));
+        renderChatList();
+    }
 
-        const items = [];
-        for (const { c, blocked, user } of rows) {
-            if (blocked) continue;
-            const partnerName = user?.nickname || 'محادثة خاصة';
-            const item = buildChatItem({
-                avatarUrl: user?.avatar, fallback: user ? firstChar(partnerName) : '💬', name: partnerName,
-                sub: `ID: ${c.partnerId}`
-            });
-            attachLongPress(item,
-                () => showChatOptions(c.chatId, partnerName, 'private', c.chatKey, c.partnerId),
-                () => openRoom(c.chatId, partnerName, 'private', c.partnerId));
-            items.push(item);
+    // ================= الإشعارات =================
+    let audioCtx = null;
+    function playBeep() {
+        try {
+            audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.frequency.value = 880; g.gain.value = 0.08;
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + 0.15);
+        } catch (e) {}
+    }
+
+    function showToast(title, body, onClick) {
+        const t = h('div', { class: 'toast' }, h('b', {}, title), body);
+        const close = () => t.remove();
+        t.onclick = () => { close(); if (onClick) onClick(); };
+        $('toastBox').appendChild(t);
+        setTimeout(close, 4500);
+    }
+
+    function pushNotify(title, body, onClick) {
+        playBeep();
+        if (navigator.vibrate) navigator.vibrate(120);
+        if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+            try {
+                const n = new Notification(title, { body, tag: 'nexus-' + title });
+                n.onclick = () => { window.focus(); n.close(); if (onClick) onClick(); };
+                return;
+            } catch (e) { /* بعض متصفحات الموبايل لا تسمح بـ new Notification */ }
         }
-        list.replaceChildren(...items);
+        showToast(title, body, onClick);
+    }
+
+    function initNotifBanner() {
+        const b = $('notifBanner');
+        b.style.display = ('Notification' in window && Notification.permission === 'default') ? 'block' : 'none';
+        b.onclick = async () => {
+            try { await Notification.requestPermission(); } catch (e) {}
+            initNotifBanner();
+        };
+    }
+
+    const findChat = (id) => privCache.find((c) => c.id === id) || grpCache.find((c) => c.id === id);
+
+    async function notifyMessage(rid, v) {
+        let c = findChat(rid);
+        if (!c) { await Promise.all([loadAcceptedChats(), loadGroupsList()]); c = findChat(rid); }
+        if (!c) return; // محذوف أو محظور
+        const body = (c.type === 'group' ? `${v.sender}: ` : '') + (v.text || '');
+        pushNotify(c.name, body, () => openRoom(c.id, c.name, c.type, c.partnerId || null));
+    }
+
+    function clearUnread(rid) {
+        if (inbox[rid]?.unread) {
+            inbox[rid].unread = 0;
+            set(ref(db, `inbox/${myId}/${rid}/unread`), 0).catch(() => {});
+        }
+    }
+
+    let inboxReady = false, notifStarted = false;
+    const prevUnread = {};
+    function startNotifications() {
+        if (notifStarted) return;
+        notifStarted = true;
+
+        onValue(ref(db, `inbox/${myId}`), (snap) => {
+            inbox = snap.val() || {};
+            for (const [rid, v] of Object.entries(inbox)) {
+                if (roomIsOpen(rid) && !document.hidden && v.unread > 0) {
+                    v.unread = 0;
+                    set(ref(db, `inbox/${myId}/${rid}/unread`), 0).catch(() => {});
+                }
+                const cur = v.unread || 0;
+                if (inboxReady && cur > (prevUnread[rid] || 0)) notifyMessage(rid, v);
+                prevUnread[rid] = cur;
+            }
+            inboxReady = true;
+            renderChatList();
+        });
+
+        let reqKeys = null;
+        onValue(ref(db, `message_requests/${myId}`), (snap) => {
+            const v = snap.val() || {};
+            const keys = Object.keys(v);
+            if (reqKeys) {
+                for (const k of keys) {
+                    if (!reqKeys.includes(k)) pushNotify('📩 طلب مراسلة جديد', `${v[k].senderName} عايز يراسلك`, () => openModal('requestsModal'));
+                }
+            }
+            reqKeys = keys;
+            loadRealtimeNotifications();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && currentRoomId && roomIsOpen(currentRoomId)) clearUnread(currentRoomId);
+        });
     }
 
     // ================= خيارات الشات الخارجي =================
@@ -1464,6 +1594,7 @@
         } else if (selectedChatType === 'group' && selectedPartnerKey) {
             await remove(ref(db, `user_groups/${myId}/${selectedPartnerKey}`));
         }
+        if (selectedChatForOptions) remove(ref(db, `inbox/${myId}/${selectedChatForOptions}`)).catch(() => {});
         closeModal('chatOptionsModal');
         loadAcceptedChats();
         loadGroupsList();
@@ -1515,6 +1646,7 @@
         currentRoomId = roomId;
         currentRoomType = type;
         activeRoomAvatarUrl = '';
+        clearUnread(roomId);
 
         $('mainDashboard').style.display = 'none';
         $('chatRoomView').style.display = 'flex';
@@ -1793,11 +1925,28 @@
     };
 
     // ================= إرسال الرسائل =================
-    async function afterSendBookkeeping() {
+    const KIND_LABEL = { image: 'صورة', video: 'فيديو', audio: 'مقطع صوتي', file: 'ملف' };
+
+    async function afterSendBookkeeping(preview) {
+        const rid = currentRoomId;
+        let recipients = [];
         if (currentRoomType === 'private') {
-            const partnerId = activePartnerUserId || partnerFromChatId(currentRoomId);
-            if (partnerId) await touchAcceptedChats(currentRoomId, partnerId);
+            const partnerId = activePartnerUserId || partnerFromChatId(rid);
+            if (partnerId) { await touchAcceptedChats(rid, partnerId); recipients = [partnerId]; }
+        } else {
+            const s = await get(ref(db, `group_members/${rid}`));
+            recipients = s.exists() ? Object.keys(s.val()).filter((id) => id !== myId) : [];
         }
+        try {
+            const now = Date.now(), text = String(preview || '').slice(0, 80);
+            const u = { [`inbox/${myId}/${rid}`]: { ts: now, text, sender: savedNickname, senderId: myId, unread: 0 } };
+            for (const id of recipients) {
+                const p = `inbox/${id}/${rid}`;
+                u[`${p}/ts`] = now; u[`${p}/text`] = text; u[`${p}/sender`] = savedNickname;
+                u[`${p}/senderId`] = myId; u[`${p}/unread`] = increment(1);
+            }
+            await update(ref(db), u);
+        } catch (e) { console.error('inbox update failed', e); }
     }
 
     async function canSendNow() {
@@ -1822,7 +1971,7 @@
             await push(ref(db, activeChatPath), {
                 text, sender: savedNickname, senderId: myId, type: 'text', timestamp: Date.now()
             });
-            await afterSendBookkeeping();
+            await afterSendBookkeeping(text);
         } catch (e) {
             console.error(e);
             input.value = text;
@@ -1907,7 +2056,7 @@
                 sender: savedNickname, senderId: myId, timestamp: Date.now()
             });
             mediaId = null; // تم بنجاح
-            await afterSendBookkeeping();
+            await afterSendBookkeeping(`${KIND_ICON[kind]} ${caption || KIND_LABEL[kind]}`);
             closeSendMedia();
         } catch (e) {
             console.error(e);
