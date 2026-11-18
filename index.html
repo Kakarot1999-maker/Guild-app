@@ -632,12 +632,16 @@
     // ================= ثوابت =================
     const OWNER_ID = "Kakarot_San1999";
     const LONG_PRESS_MS = 3000;
+    // Cloudinary (حساب مجاني، Unsigned preset). مفيش أسرار هنا.
+    const CLOUD_NAME = 'yxrk4doz';
+    const UPLOAD_PRESET = 'zchat_unsigned';
+    const CLOUD_URL_RE = new RegExp(`^https://res\\.cloudinary\\.com/${CLOUD_NAME}/`);
     const LIMITS = {
         imageSource: 25_000_000, // الصورة الأصلية قبل التصغير
-        gif: 3_000_000,
-        video: 5_000_000,
-        audio: 5_000_000,
-        file: 2_000_000
+        gif: 8_000_000,
+        video: 25_000_000,
+        audio: 10_000_000,
+        file: 10_000_000
     };
     const BG_COLORS = ['#0b141a', '#1f2c34', '#0d3b2e', '#1e3a5f', '#2d1b4e', '#4a1c2a',
                        '#3b2f1e', '#efeae2', '#dbeafe', '#fef3c7', '#fce7f3', '#e5e7eb'];
@@ -694,6 +698,27 @@
             r.onload = () => resolve(r.result);
             r.onerror = reject;
             r.readAsDataURL(file);
+        });
+    }
+
+    // رفع ملف لـ Cloudinary مع نسبة التقدم. بيرجّع الرابط الآمن (https).
+    function uploadToCloudinary(blob, kind, fileName, onProgress) {
+        const rtype = kind === 'image' ? 'image' : (kind === 'video' || kind === 'audio') ? 'video' : 'raw';
+        return new Promise((resolve, reject) => {
+            const fd = new FormData();
+            fd.append('file', blob, fileName || 'file');
+            fd.append('upload_preset', UPLOAD_PRESET);
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${rtype}/upload`);
+            xhr.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded / e.total * 100)); };
+            xhr.onload = () => {
+                let r = {};
+                try { r = JSON.parse(xhr.responseText); } catch (e) {}
+                if (xhr.status >= 200 && xhr.status < 300 && r.secure_url) resolve(r.secure_url);
+                else reject(new Error('cloudinary: ' + (r.error?.message || xhr.status)));
+            };
+            xhr.onerror = () => reject(new Error('network'));
+            xhr.send(fd);
         });
     }
 
@@ -1852,6 +1877,7 @@
 
     // ---------- تحميل وعرض المرفقات ----------
     function dataUrlValidFor(kind, durl) {
+        if (typeof durl === 'string' && CLOUD_URL_RE.test(durl)) return true; // رابط Cloudinary
         if (kind === 'image') return validImg(durl);
         if (kind === 'video') return validVideo(durl);
         if (kind === 'audio') return validAudio(durl);
@@ -1862,8 +1888,10 @@
         if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
         const snap = await get(ref(db, `chat_media/${mediaId}`));
         if (!snap.exists()) return null;
-        const durl = snap.val().data;
+        const v = snap.val();
+        const durl = v.url || v.data; // url = الجديد (Cloudinary)، data = القديم (dataURL)
         if (!dataUrlValidFor(kind, durl)) return null;
+        if (v.url) { mediaCache.set(mediaId, durl); return durl; }
         const blob = await (await fetch(durl)).blob();
         const url = URL.createObjectURL(blob);
         mediaCache.set(mediaId, url);
@@ -1871,7 +1899,9 @@
     }
 
     function triggerDownload(url, name) {
-        const a = h('a', { href: url, download: name || 'file' });
+        // الروابط الخارجية: نضيف fl_attachment عشان المتصفح ينزّل الملف بدل ما يفتحه
+        if (CLOUD_URL_RE.test(url)) url = url.replace('/upload/', '/upload/fl_attachment/');
+        const a = h('a', { href: url, download: name || 'file', target: '_blank', rel: 'noopener' });
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -1904,16 +1934,19 @@
                 await update(ref(db), { [`${base}/viewed`]: true });
                 return alert('انتهت صلاحية هذا المرفق.');
             }
-            const durl = snap.val().data;
+            const sv = snap.val();
+            const durl = sv.url || sv.data;
             if (!dataUrlValidFor(data.type, durl)) return alert('المرفق غير صالح.');
-            const blob = await (await fetch(durl)).blob();
+            let viewUrl;
+            try { viewUrl = URL.createObjectURL(await (await fetch(durl)).blob()); }
+            catch (e) { viewUrl = durl; } // لو الـ fetch اترفض نعرض الرابط مباشرة
             // نحذف الملف من القاعدة قبل ما نعرضه: مرة واحدة فقط
             await update(ref(db), {
                 [`chat_media/${data.mediaId}`]: null,
                 [`${base}/viewed`]: true,
                 [`${base}/viewedAt`]: Date.now()
             });
-            showViewer(data.type, URL.createObjectURL(blob), data.fileName, true);
+            showViewer(data.type, viewUrl, data.fileName, true);
         } catch (e) {
             console.error(e);
             alert('تعذر فتح المرفق.');
@@ -2110,18 +2143,22 @@
         try {
             if (!(await canSendNow())) return;
 
-            let dataUrl, thumb = '';
+            let upBlob = file, upName = file.name, thumb = '';
             if (kind === 'image' && file.type !== 'image/gif') {
-                dataUrl = await resizeImage(file, 1600, 0.82);
-            } else {
-                dataUrl = await readAsDataURL(file);
+                const du = await resizeImage(file, 1600, 0.82);
+                upBlob = await (await fetch(du)).blob();
+                upName = file.name.replace(/\.[^.]+$/, '') + '.jpg';
             }
             if (kind === 'image' && !once) {
                 try { thumb = await resizeImage(file, 240, 0.7); } catch (e) { thumb = ''; }
             }
 
+            // الرفع على Cloudinary، وبنخزن الرابط بس في قاعدة البيانات
+            const fileUrl = await uploadToCloudinary(upBlob, kind, upName, (p) => { btn.textContent = `جاري الرفع ${p}%`; });
+            btn.textContent = 'جاري الإرسال...';
+
             mediaId = push(ref(db, 'chat_media')).key;
-            await set(ref(db, `chat_media/${mediaId}`), { data: dataUrl, mime: file.type, owner: myId });
+            await set(ref(db, `chat_media/${mediaId}`), { url: fileUrl, mime: file.type, owner: myId });
             await push(ref(db, activeChatPath), {
                 type: kind, text: caption, fileName: file.name, size: file.size, mime: file.type,
                 mediaId, thumb, viewOnce: once, viewed: false,
@@ -2134,7 +2171,9 @@
         } catch (e) {
             console.error(e);
             if (mediaId) { remove(ref(db, `chat_media/${mediaId}`)).catch(() => {}); }
-            alert('تعذر إرسال الملف. تأكد من الاتصال وحجم الملف.');
+            alert(String(e.message || '').startsWith('cloudinary:')
+                ? 'تعذر رفع الملف: ' + e.message.slice(11)
+                : 'خطأ: ' + (e && e.message ? e.message : e));
         } finally {
             sendingMedia = false;
             btn.disabled = false;
