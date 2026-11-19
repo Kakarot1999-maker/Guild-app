@@ -2493,27 +2493,61 @@
     // ================= الكيبورد: شريط الكتابة يفضل ظاهر فوق الكيبورد (مهم للـ APK) =================
     (function keyboardFix() {
         const vv = window.visualViewport;
-        const scrollBottom = () => {
-            const box = $('roomMessagesBox');
-            if (box && $('chatRoomView').style.display === 'flex') box.scrollTop = box.scrollHeight;
+        const view = $('chatRoomView'), inp = $('roomMessageInput'), box = $('roomMessagesBox');
+        const KB_FRACTION = 0.37; // تقدير ارتفاع الكيبورد كنسبة من الشاشة (لو الـ WebView مابيقولش الارتفاع الحقيقي)
+        const scrollBottom = () => { if (view.style.display === 'flex') box.scrollTop = box.scrollHeight; };
+
+        let padded = false;
+        const setPad = (px) => {
+            view.style.boxSizing = px ? 'border-box' : '';
+            view.style.paddingBottom = px ? `${px}px` : '';
+            padded = !!px;
+            requestAnimationFrame(scrollBottom);
         };
-        let lastH = -1;
+
+        // 1) لو المتصفح بيدعم VirtualKeyboard API: ارتفاع حقيقي للكيبورد
+        let vkWorks = false;
+        if ('virtualKeyboard' in navigator) {
+            try {
+                navigator.virtualKeyboard.overlaysContent = true;
+                navigator.virtualKeyboard.addEventListener('geometrychange', () => {
+                    const hgt = Math.round(navigator.virtualKeyboard.boundingRect.height);
+                    if (hgt > 0) { vkWorks = true; setPad(hgt); } else if (vkWorks) setPad(0);
+                });
+            } catch (e) { /* مش مدعوم */ }
+        }
+
+        // 2) لو الـ WebView بيصغّر المساحة المرئية بس مش بيصغّر الصفحة
+        let lastH = '';
         const apply = () => {
             if (!vv) return;
-            // لو الكيبورد بيغطي الصفحة من غير ما يصغّرها: نصغّر الصفحة بإيدينا على المساحة المرئية
             const overlay = window.innerHeight - vv.height > 100;
-            const hh = overlay ? `${Math.round(vv.height)}px` : "";
+            const hh = overlay ? `${Math.round(vv.height)}px` : '';
             document.documentElement.style.height = hh;
             document.body.style.height = hh;
             if (overlay) window.scrollTo(0, 0);
             if (hh !== lastH) { lastH = hh; requestAnimationFrame(scrollBottom); }
         };
-        if (vv) {
-            vv.addEventListener('resize', apply);
-            vv.addEventListener('scroll', apply);
-        }
+        if (vv) { vv.addEventListener('resize', apply); vv.addEventListener('scroll', apply); }
         window.addEventListener('resize', apply);
-        $('roomMessageInput').addEventListener('focus', () => setTimeout(() => { apply(); scrollBottom(); }, 350));
+
+        // 3) احتياطي: لو الكيبورد ظهر ومفيش أي حاجة اتغيّرت، نرفع الشريط بتقدير
+        let baseline = 0;
+        const handled = () => vkWorks || Math.min(window.innerHeight, vv ? vv.height : window.innerHeight) < baseline - 100;
+        const onFocus = () => {
+            baseline = Math.max(window.innerHeight, vv ? vv.height : 0);
+            setTimeout(() => {
+                if (document.activeElement !== inp) return;
+                apply(); scrollBottom();
+                if (!handled() && !padded) setPad(Math.round(baseline * KB_FRACTION));
+            }, 450);
+        };
+        inp.addEventListener('focus', onFocus);
+        // لو قفلت الكيبورد بزرار الرجوع وضغطت على الخانة تاني (من غير focus جديد)
+        inp.addEventListener('pointerdown', () => setTimeout(() => { if (document.activeElement === inp && !padded) onFocus(); }, 0));
+        inp.addEventListener('blur', () => setPad(0));
+        // الضغط على الرسائل يقفل الكيبورد ويرجّع الشريط لمكانه
+        box.addEventListener('pointerdown', () => { if (document.activeElement === inp) inp.blur(); });
     })();
 
     // ================= PWA وإشعارات أندرويد =================
