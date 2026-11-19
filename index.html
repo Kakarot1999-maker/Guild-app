@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Z-Chat - التطبيق المتطور</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00a884">
@@ -207,14 +207,27 @@
         .toast b { color:var(--accent); display:block; margin-bottom:2px; }
 
         #emojiPanel { display:none; flex-direction:column; background:var(--bg-panel); border-top:1px solid var(--border-color); flex-shrink:0; max-height:250px; }
-        #emojiTabs { display:flex; border-bottom:1px solid var(--border-color); }
-        #emojiTabs button { flex:1; background:none; border:none; color:var(--text-muted); padding:8px 0; font-size:19px; cursor:pointer; border-bottom:2px solid transparent; }
+        #emojiTabs { display:flex; flex-shrink:0; border-bottom:1px solid var(--border-color); overflow-x:auto; }
+        #emojiTabs button { flex:1 0 auto; background:none; border:none; color:var(--text-muted); padding:8px 11px; font-size:19px; cursor:pointer; border-bottom:2px solid transparent; }
         #emojiTabs button.on { border-bottom-color:var(--accent); }
         #emojiGrid { display:flex; flex-wrap:wrap; overflow-y:auto; padding:6px; }
         #emojiGrid span { font-size:26px; width:12.5%; text-align:center; cursor:pointer; padding:5px 0; }
         #emojiGrid.stk span { font-size:50px; width:25%; }
         .sticker-bubble { background:transparent !important; }
         .sticker-big { font-size:72px; line-height:1.15; }
+
+        /* الرد على الرسائل */
+        .message-bubble { touch-action: pan-y; transition: transform .15s; }
+        .reply-quote { border-right:3px solid var(--accent); background:rgba(0,0,0,.18); border-radius:6px; padding:4px 8px; margin:4px 0; font-size:12px; cursor:pointer; white-space:normal; }
+        .reply-quote b { display:block; color:var(--accent); font-size:11.5px; }
+        .reply-quote span { display:block; opacity:.8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
+        .message-bubble.flash { animation: flashMsg 1.3s ease; }
+        @keyframes flashMsg { 0%, 60% { box-shadow: 0 0 0 3px var(--accent); } 100% { box-shadow: 0 1px 1px rgba(0,0,0,0.1); } }
+        #replyBar { display:none; align-items:center; gap:10px; padding:6px 12px; background:var(--bg-panel); border-top:1px solid var(--border-color); flex-shrink:0; }
+        #replyBar .rb-body { flex:1; min-width:0; border-right:3px solid var(--accent); padding-right:8px; }
+        #replyBar b { display:block; color:var(--accent); font-size:12px; }
+        #replyBar .rb-text { font-size:12px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        #replyBar button { background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; padding:4px 8px; }
     </style>
 </head>
 <body>
@@ -345,6 +358,7 @@
     <div id="msgOptionsModal" class="modal-overlay">
         <div class="modal-content" style="max-width:280px;">
             <h3 style="color:var(--accent); margin-top:0; font-size:15px;">خيارات الرسالة</h3>
+            <button onclick="replyFromOptions()" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">↩️ رد</button>
             <button onclick="deleteMsgForMe()" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">🗑️ حذف لدي</button>
             <button id="btnDeleteMsgAll" onclick="deleteMsgForAll()" style="display:none; width:100%; background:var(--danger); border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">❌ حذف لدى الجميع</button>
             <button onclick="closeModal('msgOptionsModal')" style="width:100%; background:#3d4a52; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
@@ -583,6 +597,12 @@
             <div id="emojiGrid"></div>
         </div>
 
+        <!-- شريط الرد -->
+        <div id="replyBar">
+            <div class="rb-body"><b id="replyBarName"></b><div class="rb-text" id="replyBarText"></div></div>
+            <button onclick="clearReply()" title="إلغاء الرد">✕</button>
+        </div>
+
         <!-- صندوق إرسال الرسائل مع المرفقات -->
         <div class="room-input-box" id="roomInputBoxContainer">
             <input type="file" id="mediaFileInput" accept="audio/*,.pdf,.doc,.docx,.txt" style="display:none;" onchange="handleMediaUpload(this)">
@@ -739,6 +759,9 @@
             img.src = url;
         });
     }
+
+    // شات "Saved Messages": شات خاص مع نفسك (الـ roomId = myId_myId)
+    const isSavedRoom = (rid) => !!myId && rid === `${myId}_${myId}`;
 
     function partnerFromChatId(chatId) {
         // الـ IDs نفسها فيها "_" فمينفعش نعمل split
@@ -1490,18 +1513,19 @@
     function renderChatList() {
         const all = [...privCache, ...grpCache]
             .map((c) => { const ib = inbox[c.id]; return { c, ib, ts: Math.max(c.time || 0, ib?.ts || 0) }; })
-            .sort((a, b) => (isPinned(b.c.id) - isPinned(a.c.id)) || (b.ts - a.ts));
+            .sort((a, b) => ((b.c.saved ? 2 : isPinned(b.c.id)) - (a.c.saved ? 2 : isPinned(a.c.id))) || (b.ts - a.ts));
         let total = 0;
         const items = all.map(({ c, ib }) => {
             const unread = roomIsOpen(c.id) ? 0 : (ib?.unread || 0);
             total += unread;
             let sub = c.type === 'group' ? (c.desc || 'جروب تفاعلي') : `ID: ${c.handle || c.partnerId}`;
             if (ib?.text) sub = (ib.senderId === myId ? 'أنت: ' : (c.type === 'group' ? `${ib.sender}: ` : '')) + ib.text;
+            if (c.saved) sub = ib?.text || 'احفظ ملاحظات وصور وملفات لنفسك';
             const item = buildChatItem(c.type === 'group'
                 ? { avatarUrl: c.avatar, fallback: '👥', name: dispName(c), sub, bg: '#1f2c34', time: ib?.ts, unread }
-                : { avatarUrl: c.avatar, fallback: c.hasUser ? firstChar(c.name) : '💬', name: dispName(c), sub, time: ib?.ts, unread });
+                : { avatarUrl: c.avatar, fallback: c.saved ? '🔖' : (c.hasUser ? firstChar(c.name) : '💬'), name: dispName(c), sub, bg: c.saved ? '#b7791f' : undefined, time: ib?.ts, unread });
             attachLongPress(item,
-                () => showChatOptions(c.id, c.name, c.type, c.type === 'group' ? c.id : c.key, c.partnerId || null),
+                () => { if (!c.saved) showChatOptions(c.id, c.name, c.type, c.type === 'group' ? c.id : c.key, c.partnerId || null); },
                 () => openRoom(c.id, c.name, c.type, c.partnerId || null));
             return item;
         });
@@ -1522,9 +1546,11 @@
     }
 
     async function loadAcceptedChats() {
+        // شات Saved Messages بيتضاف محلياً دايماً (من غير ما نكتب في القاعدة)
+        const savedChat = { key: myId, id: `${myId}_${myId}`, partnerId: myId, time: 0, type: 'private', name: 'Saved Messages', hasUser: true, saved: true };
         const snap = await get(ref(db, `accepted_chats/${myId}`));
-        if (!snap.exists()) { privCache = []; renderChatList(); return; }
-        const chats = Object.entries(snap.val()).map(([key, v]) => ({
+        const entries = snap.exists() ? Object.entries(snap.val()).filter(([key, v]) => (v.partnerId || key) !== myId) : [];
+        const chats = entries.map(([key, v]) => ({
             key, id: v.chatId, partnerId: v.partnerId || key, time: v.timestamp || 0
         }));
         const rows = await Promise.all(chats.map(async (c) => {
@@ -1534,9 +1560,9 @@
             ]);
             return { c, blocked: blk.exists(), user: us.exists() ? us.val() : null };
         }));
-        privCache = rows.filter((r) => !r.blocked).map(({ c, user }) => ({
+        privCache = [savedChat, ...rows.filter((r) => !r.blocked).map(({ c, user }) => ({
             ...c, type: 'private', name: user?.nickname || 'محادثة خاصة', avatar: user?.avatar, hasUser: !!user, handle: user?.handle
-        }));
+        }))];
         renderChatList();
     }
 
@@ -1715,6 +1741,7 @@
         roomToken++;
         activeChatPath = null;
         roomMsgs.clear();
+        clearReply();
         clearMediaCache();
         closeMediaViewer();
         $('roomMessagesBox').replaceChildren();
@@ -1730,6 +1757,7 @@
         stopRoomListeners();
         clearMediaCache();
         roomMsgs.clear();
+        clearReply();
         const token = ++roomToken;
         currentRoomId = roomId;
         currentRoomType = type;
@@ -1739,7 +1767,7 @@
 
         $('mainDashboard').style.display = 'none';
         $('chatRoomView').style.display = 'flex';
-        $('roomTitleName').textContent = roomName;
+        $('roomTitleName').textContent = (isSavedRoom(roomId) ? '🔖 ' : '') + roomName;
         $('btnGroupMenu').style.display = type === 'group' ? '' : 'none';
         $('roomInputBoxContainer').style.display = 'flex';
         const roomAvatarBox = $('roomAvatarBox');
@@ -1767,7 +1795,7 @@
             } else {
                 activePartnerUserId = partnerId || partnerFromChatId(roomId);
                 activeChatPath = `private_chats/${roomId}`;
-                if (activePartnerUserId) {
+                if (activePartnerUserId && activePartnerUserId !== myId) {
                     const uSnap = await get(ref(db, `users_directory/${activePartnerUserId}`));
                     if (token !== roomToken) return;
                     if (uSnap.exists() && validImg(uSnap.val().avatar)) {
@@ -1852,6 +1880,14 @@
         });
         bubble.appendChild(h('b', {}, `${data.sender}: `));
 
+        if (data.reply && data.reply.id) {
+            const q = h('div', { class: 'reply-quote' },
+                h('b', {}, data.reply.senderId === myId ? 'أنت' : (data.reply.sender || '')),
+                h('span', {}, String(data.reply.text || '')));
+            q.addEventListener('click', (e) => { e.stopPropagation(); jumpToMsg(data.reply.id); });
+            bubble.appendChild(q);
+        }
+
         if (data.mediaId) {
             renderMediaBody(bubble, data, msgId, roomId, type);
         } else if (data.type === 'image' && validImg(data.url)) {          // رسائل قديمة
@@ -1872,6 +1908,7 @@
         }
 
         attachLongPress(bubble, () => openMsgOptions(roomId, msgId, type, data.senderId));
+        attachSwipeReply(bubble, msgId);
         return bubble;
     }
 
@@ -2027,12 +2064,84 @@
     // ================= إرسال الرسائل =================
     const KIND_LABEL = { image: 'صورة', video: 'فيديو', audio: 'مقطع صوتي', file: 'ملف' };
 
+    // ================= الرد على الرسائل (خاص وجروب) =================
+    let replyTo = null;
+
+    function replyPreviewOf(m) {
+        if (m.viewOnce) return '🔒 مرفق لمرة واحدة';
+        if (m.type === 'sticker') return 'ملصق ' + (m.text || '');
+        if (m.mediaId || ['image', 'video', 'audio', 'file'].includes(m.type)) {
+            return `${KIND_ICON[m.type] || '📁'} ${m.text || KIND_LABEL[m.type] || 'مرفق'}`;
+        }
+        return String(m.text || '');
+    }
+
+    function setReply(msgId) {
+        const m = roomMsgs.get(msgId);
+        if (!m) return;
+        replyTo = { id: msgId, sender: m.sender || '', senderId: m.senderId || '', text: replyPreviewOf(m).slice(0, 80) };
+        $('replyBarName').textContent = m.senderId === myId ? 'الرد على نفسك' : `الرد على ${m.sender || ''}`;
+        $('replyBarText').textContent = replyTo.text;
+        $('replyBar').style.display = 'flex';
+        toggleEmoji(false);
+        $('roomMessageInput').focus();
+    }
+
+    window.clearReply = function () {
+        replyTo = null;
+        $('replyBar').style.display = 'none';
+    };
+
+    window.replyFromOptions = function () {
+        closeModal('msgOptionsModal');
+        setReply(selectedMsgIdForAction);
+    };
+
+    function jumpToMsg(id) {
+        const el = document.getElementById(`msg_${id}`);
+        if (!el) { showToast('↩️ الرسالة الأصلية', 'مش موجودة (اتمسحت أو لسه ما اتحمّلتش).'); return; }
+        el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        el.classList.remove('flash');
+        void el.offsetWidth;
+        el.classList.add('flash');
+        setTimeout(() => el.classList.remove('flash'), 1400);
+    }
+
+    // السحب على الرسالة (يمين أو شمال) = رد
+    function attachSwipeReply(el, msgId) {
+        let sx = 0, sy = 0, dx = 0, tracking = false, locked = false;
+        const reset = () => { el.style.transition = ''; el.style.transform = ''; };
+        el.addEventListener('touchstart', (e) => {
+            const t = e.touches[0];
+            sx = t.clientX; sy = t.clientY; dx = 0; tracking = true; locked = false;
+        }, { passive: true });
+        el.addEventListener('touchmove', (e) => {
+            if (!tracking) return;
+            const t = e.touches[0];
+            const mx = t.clientX - sx, my = t.clientY - sy;
+            if (!locked) {
+                if (Math.abs(my) > 12 && Math.abs(my) > Math.abs(mx)) { tracking = false; return; }
+                if (Math.abs(mx) > 12) locked = true; else return;
+            }
+            dx = mx;
+            el.style.transition = 'none';
+            el.style.transform = `translateX(${Math.max(-60, Math.min(60, dx * 0.6))}px)`;
+        }, { passive: true });
+        el.addEventListener('touchend', () => {
+            const go = tracking && locked && Math.abs(dx) > 70;
+            tracking = false;
+            reset();
+            if (go) { if (navigator.vibrate) navigator.vibrate(15); setReply(msgId); }
+        });
+        el.addEventListener('touchcancel', () => { tracking = false; reset(); });
+    }
+
     async function afterSendBookkeeping(preview) {
         const rid = currentRoomId;
         let recipients = [];
         if (currentRoomType === 'private') {
             const partnerId = activePartnerUserId || partnerFromChatId(rid);
-            if (partnerId) { await touchAcceptedChats(rid, partnerId); recipients = [partnerId]; }
+            if (partnerId && partnerId !== myId) { await touchAcceptedChats(rid, partnerId); recipients = [partnerId]; }
         } else {
             const s = await get(ref(db, `group_members/${rid}`));
             recipients = s.exists() ? Object.keys(s.val()).filter((id) => id !== myId) : [];
@@ -2053,7 +2162,7 @@
         if (!activeChatPath) return false;
         if (currentRoomType === 'private') {
             const partnerId = activePartnerUserId || partnerFromChatId(currentRoomId);
-            if (partnerId && !isOwner() && await isChatBlocked(partnerId)) {
+            if (partnerId && partnerId !== myId && !isOwner() && await isChatBlocked(partnerId)) {
                 alert('لا يمكنك مراسلة هذا الشخص.');
                 return false;
             }
@@ -2068,9 +2177,11 @@
         input.value = '';
         try {
             if (!(await canSendNow())) { input.value = text; return; }
-            await push(ref(db, activeChatPath), {
-                text, sender: savedNickname, senderId: myId, type: 'text', timestamp: Date.now()
-            });
+            const msg = { text, sender: savedNickname, senderId: myId, type: 'text', timestamp: Date.now() };
+            if (replyTo) msg.reply = replyTo;
+            await push(ref(db, activeChatPath), msg);
+            clearReply();
+            toggleEmoji(false);
             await afterSendBookkeeping(text);
         } catch (e) {
             console.error(e);
@@ -2115,7 +2226,7 @@
         $('sendMediaCaption').value = '';
         $('viewOnceCheck').checked = false;
         // "عرض مرة واحدة" متاحة فقط في الشات الخاص وللصور والفيديو والصوت
-        $('viewOnceRow').style.display = (currentRoomType === 'private' && kind !== 'file') ? 'flex' : 'none';
+        $('viewOnceRow').style.display = (currentRoomType === 'private' && kind !== 'file' && !isSavedRoom(currentRoomId)) ? 'flex' : 'none';
         openModal('sendMediaModal');
     };
 
@@ -2138,7 +2249,7 @@
         const file = pendingFile;
         const kind = mediaKindOf(file);
         const caption = $('sendMediaCaption').value.trim();
-        const once = $('viewOnceCheck').checked && currentRoomType === 'private' && kind !== 'file';
+        const once = $('viewOnceCheck').checked && currentRoomType === 'private' && kind !== 'file' && !isSavedRoom(currentRoomId);
         let mediaId = null;
         try {
             if (!(await canSendNow())) return;
@@ -2159,11 +2270,14 @@
 
             mediaId = push(ref(db, 'chat_media')).key;
             await set(ref(db, `chat_media/${mediaId}`), { url: fileUrl, mime: file.type, owner: myId });
-            await push(ref(db, activeChatPath), {
+            const mediaMsg = {
                 type: kind, text: caption, fileName: file.name, size: file.size, mime: file.type,
                 mediaId, thumb, viewOnce: once, viewed: false,
                 sender: savedNickname, senderId: myId, timestamp: Date.now()
-            });
+            };
+            if (replyTo) mediaMsg.reply = replyTo;
+            await push(ref(db, activeChatPath), mediaMsg);
+            clearReply();
             mediaId = null; // تم بنجاح
             await afterSendBookkeeping(`${KIND_ICON[kind]} ${caption || KIND_LABEL[kind]}`);
             closeSendMedia();
@@ -2171,9 +2285,10 @@
         } catch (e) {
             console.error(e);
             if (mediaId) { remove(ref(db, `chat_media/${mediaId}`)).catch(() => {}); }
-            alert(String(e.message || '').startsWith('cloudinary:')
-                ? 'تعذر رفع الملف: ' + e.message.slice(11)
-                : 'خطأ: ' + (e && e.message ? e.message : e));
+            const em = String((e && e.message) || e || '');
+            alert(em.startsWith('cloudinary:') ? 'تعذر رفع الملف: ' + em.slice(11)
+                : em === 'network' ? 'تعذر رفع الملف، تأكد من الاتصال بالإنترنت.'
+                : 'تعذر إرسال الملف: ' + em);
         } finally {
             sendingMedia = false;
             btn.disabled = false;
@@ -2220,21 +2335,42 @@
     // ================= الإيموجي والملصقات =================
     const segs = (s) => window.Intl?.Segmenter ? [...new Intl.Segmenter().segment(s)].map((x) => x.segment) : Array.from(s);
     const EMOJI_TABS = {
-        '😀': '😀😃😄😁😆😅😂🤣😊😇🙂😉😍🥰😘😋😜🤪😎🤩🥳😏😒😞😔😢😭😤😡🤬😱😨😰🤗🤔🤭🙄😴🤒🤕🥵🥶😷🤮🤢😈💀👻',
-        '👍': '👍👎👌✌️🤞🤟🤘👏🙌🙏💪👋🤝✋🖐️👊✊🫶🤙☝️👈👉👆👇✍️🤲👀🧠🫡',
-        '❤️': '❤️🧡💛💚💙💜🖤🤍💔💕💞💓💗💖💘💝🔥✨⭐🌟💯🎉🎊🎁🏆🎂🎈💥💫💤',
-        '🐶': '🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐸🐵🐔🐧🦄🐝🦋🌹🌸🌞🌈⚽🏀🍕🍔🍟🍦☕🚗✈️📱💻🎮🎧',
-        '🎭': '😂🤣😍🥰😘😎🥳😭😡🤯😱🤔🙄😴🤢🥶🤡👻💀👽🤖💩🔥💯❤️💔🎉👍👏🙏💪🫡🤝🙌🐶🐱🦄🐼'
+        '😀': '😀😃😄😁😆😅😂🤣🥲☺️😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🤩🥳😏😒😞😔😟😕🙁☹️😣😖😫😩🥺😢😭😤😠😡🤬🤯😳🥵🥶😱😨😰😥😓🤗🤔🤭🤫🤥😶😐😑😬🙄😯😦😧😮😲🥱😴🤤😪😵🤐🥴🤢🤮🤧😷🤒🤕🤑🤠😈👿👹👺🤡💩👻💀☠️👽👾🤖🎃😺😸😹😻😼😽🙀😿😾',
+        '👍': '👍👎👌✌️🤞🤟🤘🤙👈👉👆👇☝️✋🤚🖐️🖖👋🤏🤝👏🙌👐🤲🙏✍️💅🤳💪🦾🦵🦶👂👃🧠👀👁️👅👄🫶🫡',
+        '❤️': '❤️🧡💛💚💙💜🖤🤍🤎💔❣️💕💞💓💗💖💘💝💟♥️💋💌🔥✨⭐🌟💫💥💯💢💦💨💤🎉🎊🎁🎈🏆🥇🥈🥉🏅🎖️👑💎',
+        '🐶': '🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐸🐵🙈🙉🙊🐒🐔🐧🐦🐤🦆🦅🦉🦇🐺🐗🐴🦄🐝🐛🦋🐌🐞🐜🦟🦗🕷️🦂🐢🐍🦎🐙🦑🦐🦀🐡🐠🐟🐬🐳🐋🦈🐊🐅🐆🦓🦍🐘🦏🐪🐫🦒🦘🐃🐂🐄🐎🐖🐏🐑🦙🐐🦌🐕🐩🐈🐓🦃🕊️🐇🐁🐀🐿️🦔🌵🎄🌲🌳🌴🌱🌿☘️🍀🍁🍂🍃🌺🌻🌹🌷🌸💐🌼🍄🌍🌙🌞🌝☀️⛅☁️🌧️⛈️❄️☃️🌈🌊',
+        '🍔': '🍎🍏🍐🍊🍋🍌🍉🍇🍓🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🌽🥕🧄🧅🥔🍠🥐🥯🍞🥖🧀🥚🍳🧈🥞🧇🥓🥩🍗🍖🌭🍔🍟🍕🥪🥙🧆🌮🌯🥗🥘🍝🍜🍲🍛🍣🍱🥟🍤🍙🍚🍘🍥🥠🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🍩🍪🌰🥜🍯🥛🍼☕🍵🧃🥤🍶🍺🍻🥂🍷🥃🍸🍹🧉🧊🥄🍴🍽️',
+        '⚽': '⚽🏀🏈⚾🥎🎾🏐🏉🥏🎱🏓🏸🏒🏑🥍🏏🥅⛳🏹🎣🥊🥋🎽🛹🛼⛸️🥌🎿⛷️🏂🏋️🤸🤼🤺🏇🏊🚴🧘🎮🕹️🎲🧩♟️🎯🎳🎰🎨🎭🎬🎤🎧🎼🎹🥁🎷🎺🎸🎻',
+        '✈️': '🚗🚕🚙🚌🚎🏎️🚓🚑🚒🚐🚚🚛🚜🛵🏍️🚲🛴🚨🚔🚍🚘🚖🚡🚠🚟🚃🚋🚞🚝🚄🚅🚈🚂🚆🚇🚊🚉✈️🛫🛬🛩️💺🚁🚀🛸⛵🚤🛥️🛳️⛴️🚢⚓⛽🚧🚦🚥🗺️🗿🗽🗼🏰🏯🏟️🎡🎢🎠⛲⛱️🏖️🏝️🏜️🌋⛰️🏔️🗻🏕️⛺🏠🏡🏢🏥🏦🏨🏪🏫🕌🕋⛪🌅🌄🌃🌉🌌',
+        '💡': '⌚📱💻⌨️🖥️🖨️🖱️💽💾💿📷📸📹🎥📞☎️📺📻🎙️⏰⏳📡🔋🔌💡🔦🕯️💸💵💴💶💷💰💳🧾⚖️🔧🔨⚒️🛠️⛏️🔩⚙️🧱⛓️🧲🛡️🔮📿💈⚗️🔭🔬💊💉🩸🩹🌡️🧹🧺🧻🚽🚿🛁🧼🧽🔑🗝️🚪🛏️🛋️🖼️🛍️🎀🏮✉️📩📦🏷️📜📄📊📈📉📋📌📍📎✂️🗑️🔒🔓🔍🔎📚📖📝✏️🖊️🖌️🖍️',
+        '🔣': '✅❌❎✔️❓❔❗❕‼️⁉️⚠️🚫⛔📛🔞💯🔔🔕🔴🟠🟡🟢🔵🟣⚫⚪🟤🔶🔷🔸🔹🔺🔻💠🔘🔳🔲▶️⏸️⏹️⏺️⏭️⏮️⏩⏪🔀🔁🔂🔼🔽➡️⬅️⬆️⬇️↗️↘️↙️↖️↕️↔️🔄➕➖➗✖️♾️💲™️©️®️〰️➰➿🔝🔙🔛🔜✳️✴️❇️🆗🆒🆕🆓🆙🆘ℹ️🅰️🅱️🆎🅾️🌐♻️⚜️🔱',
+        '🎭': '😂🤣😍🥰😘😎🥳😭😡🤯😱🤔🙄😴🤢🥶🤡👻💀👽🤖💩🔥💯❤️💔🎉👍👏🙏💪🫡🤝🙌🐶🐱🦄🐼😅😆😜🤪😏😒🥺😢😤🤬😈👿🤫🤭🙈🙉🙊😇🤩😋🤤😵🥴🤑🤠👑💎🏆🎂🎁🌹💐☀️🌈⚡❄️'
     };
+    const RECENT_KEY = 'nexus_recent_emoji';
+    const RECENT_TAB = '🕘';
+    const recentEmojis = () => lsList(RECENT_KEY);
+    function addRecentEmoji(e) {
+        try {
+            const arr = recentEmojis().filter((x) => x !== e);
+            arr.unshift(e);
+            localStorage.setItem(RECENT_KEY, JSON.stringify(arr.slice(0, 30)));
+        } catch (err) { /* التخزين غير متاح */ }
+    }
     let emojiTab = '😀';
 
     function renderEmojiPanel() {
         const stk = emojiTab === '🎭';
-        $('emojiTabs').replaceChildren(...Object.keys(EMOJI_TABS).map((k) =>
+        const tabs = [RECENT_TAB, ...Object.keys(EMOJI_TABS)];
+        $('emojiTabs').replaceChildren(...tabs.map((k) =>
             h('button', { class: k === emojiTab ? 'on' : '', onclick: () => { emojiTab = k; renderEmojiPanel(); } }, k === '🎭' ? '🎭 ملصقات' : k)));
         const grid = $('emojiGrid');
         grid.className = stk ? 'stk' : '';
-        grid.replaceChildren(...segs(EMOJI_TABS[emojiTab]).map((e) =>
+        const list = emojiTab === RECENT_TAB ? recentEmojis() : segs(EMOJI_TABS[emojiTab]);
+        if (!list.length) {
+            grid.replaceChildren(h('div', { style: 'width:100%; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;' }, 'مفيش إيموجيات أخيرة لسه'));
+            return;
+        }
+        grid.replaceChildren(...list.map((e) =>
             h('span', { onclick: () => stk ? sendSticker(e) : insertEmoji(e) }, e)));
     }
 
@@ -2242,20 +2378,32 @@
         const panel = $('emojiPanel');
         const show = typeof force === 'boolean' ? force : panel.style.display !== 'flex';
         panel.style.display = show ? 'flex' : 'none';
-        if (show) renderEmojiPanel();
+        if (show) {
+            // أول تبويب: الأخيرة (لو فيه)، وإلا الوجوه
+            emojiTab = recentEmojis().length ? RECENT_TAB : '😀';
+            $('roomMessageInput').blur(); // نقفل الكيبورد عشان ما يظهروش فوق بعض
+            renderEmojiPanel();
+        }
     };
+    // الضغط على خانة الكتابة يقفل قايمة الإيموجي (والكيبورد يفتح)
+    $('roomMessageInput').addEventListener('pointerdown', () => toggleEmoji(false));
 
     function insertEmoji(e) {
         const inp = $('roomMessageInput');
         inp.setRangeText(e, inp.selectionStart ?? inp.value.length, inp.selectionEnd ?? inp.value.length, 'end');
-        inp.focus();
+        addRecentEmoji(e);
+        inp.dispatchEvent(new Event('input')); // عشان "يكتب الآن"
     }
 
     async function sendSticker(s) {
         if (!activeChatPath) return;
         try {
             if (!(await canSendNow())) return;
-            await push(ref(db, activeChatPath), { text: s, type: 'sticker', sender: savedNickname, senderId: myId, timestamp: Date.now() });
+            const msg = { text: s, type: 'sticker', sender: savedNickname, senderId: myId, timestamp: Date.now() };
+            if (replyTo) msg.reply = replyTo;
+            await push(ref(db, activeChatPath), msg);
+            addRecentEmoji(s);
+            clearReply();
             await afterSendBookkeeping('ملصق ' + s);
             toggleEmoji(false);
         } catch (e) { console.error(e); alert('تعذر إرسال الملصق.'); }
@@ -2287,7 +2435,7 @@
     // ================= يكتب الآن =================
     let typingTimer = null, typingLast = 0, typingUnsub = null;
     function onTyping() {
-        if (!currentRoomId) return;
+        if (!currentRoomId || isSavedRoom(currentRoomId)) return;
         const now = Date.now(), rid = currentRoomId;
         if (now - typingLast > 2000) { typingLast = now; set(ref(db, `typing/${rid}/${myId}`), now).catch(() => {}); }
         clearTimeout(typingTimer);
@@ -2341,6 +2489,32 @@
             rec.start(); btn.textContent = '⏹️'; btn.style.color = 'var(--danger)';
         } catch (e) { alert('مش قادر أوصل للميكروفون. اسمح بالإذن وجرّب تاني.'); }
     };
+
+    // ================= الكيبورد: شريط الكتابة يفضل ظاهر فوق الكيبورد (مهم للـ APK) =================
+    (function keyboardFix() {
+        const vv = window.visualViewport;
+        const scrollBottom = () => {
+            const box = $('roomMessagesBox');
+            if (box && $('chatRoomView').style.display === 'flex') box.scrollTop = box.scrollHeight;
+        };
+        let lastH = -1;
+        const apply = () => {
+            if (!vv) return;
+            // لو الكيبورد بيغطي الصفحة من غير ما يصغّرها: نصغّر الصفحة بإيدينا على المساحة المرئية
+            const overlay = window.innerHeight - vv.height > 100;
+            const hh = overlay ? `${Math.round(vv.height)}px` : "";
+            document.documentElement.style.height = hh;
+            document.body.style.height = hh;
+            if (overlay) window.scrollTo(0, 0);
+            if (hh !== lastH) { lastH = hh; requestAnimationFrame(scrollBottom); }
+        };
+        if (vv) {
+            vv.addEventListener('resize', apply);
+            vv.addEventListener('scroll', apply);
+        }
+        window.addEventListener('resize', apply);
+        $('roomMessageInput').addEventListener('focus', () => setTimeout(() => { apply(); scrollBottom(); }, 350));
+    })();
 
     // ================= PWA وإشعارات أندرويد =================
     let swReg = null;
