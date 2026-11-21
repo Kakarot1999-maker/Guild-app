@@ -333,6 +333,72 @@
         .modal-content input, .modal-content textarea, .modal-content select { border-radius: 12px; }
         .toast { border-radius: 14px; }
         #emojiTabs button.on { border-bottom-color: var(--accent); }
+
+        /* ================= تحديث 1: أيقونات + لمسة زجاجية + صفحات ================= */
+        .svgi { fill: currentColor; fill-opacity: .10; stroke: currentColor; display: block; }
+        .nav-btn .ni { filter: none !important; width: 50px; height: 32px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: background .15s, box-shadow .15s; }
+        .nav-btn.active .ni { background: rgba(232,184,74,.16); box-shadow: 0 0 14px rgba(232,184,74,.28), inset 0 0 0 1px rgba(232,184,74,.45); }
+        .nav-btn.active .svgi { fill-opacity: .30; }
+        .nav-btn.active::before { display: none; }
+        .nav-btn { font-size: 10.5px; padding: 8px 2px 6px; }
+        .btn-icon .svgi { margin: auto; }
+
+        .bottom-nav-bar { background: rgba(20,23,28,.72); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+        body.light-theme .bottom-nav-bar { background: rgba(255,255,255,.78); }
+        #mainDashboard { background: radial-gradient(ellipse at 18% -8%, rgba(232,184,74,.10), transparent 46%), var(--bg-main); }
+        .chat-header { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+        .modal-overlay { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+        .modal-content { background: rgba(26,30,37,.86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.08); }
+        body.light-theme .modal-content { background: rgba(255,255,255,.9); border-color: rgba(0,0,0,.06); }
+        .toast { background: rgba(26,30,37,.88); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+        body.light-theme .toast { background: rgba(255,255,255,.92); }
+
+        /* الصفحات */
+        .tab-page { display: none; flex: 1; flex-direction: column; min-height: 0; background: transparent; }
+        .tab-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px 6px; flex-shrink: 0; }
+        .tab-head h2 { margin: 0; font-size: 20px; font-weight: 800; color: var(--accent); }
+        .tab-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+        .soon-box { margin: auto; text-align: center; color: var(--text-muted); padding: 30px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .soon-box b { color: var(--text-main); font-size: 17px; }
+        .soon-box small { font-size: 13px; max-width: 260px; line-height: 1.7; }
+        .soon-ic { color: var(--accent); }
+
+        .pf-card { background: rgba(255,255,255,.04); border: 1px solid var(--border-color); border-radius: 18px; padding: 12px 14px; box-sizing: border-box; }
+        body.light-theme .pf-card { background: var(--bg-panel); }
+        .pf-top { text-align: center; padding: 18px 0 10px; }
+        .pf-avwrap { position: relative; width: 132px; margin: 0 auto 10px; }
+        .pf-avatar { width: 132px !important; height: 132px !important; font-size: 52px !important; margin: 0 !important; border: 3px solid var(--accent); box-shadow: 0 0 0 4px var(--bg-main), 0 0 0 6px rgba(232,184,74,.3); cursor: pointer; }
+        .pf-cam { position: absolute; bottom: 2px; left: 2px; width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--bg-main); background: linear-gradient(135deg,var(--accent-2),var(--accent)); color: var(--on-accent); font-size: 18px; cursor: pointer; padding: 0; }
+        .pf-name { font-size: 20px; font-weight: 800; margin: 4px 0 2px; }
+        .pf-sub { font-size: 13px; color: var(--text-muted); }
+        .pf-list { margin: 10px 14px; padding: 4px 6px; }
+        .pf-row { display: flex; align-items: center; gap: 14px; padding: 13px 10px; border-bottom: 1px solid var(--border-color); }
+        .pf-row:last-child { border-bottom: none; }
+        .pf-row.tap { cursor: pointer; }
+        .pf-row.tap:active { background: var(--bg-sec); border-radius: 12px; }
+        .pf-ic { width: 26px; text-align: center; font-size: 19px; color: var(--text-muted); flex-shrink: 0; }
+        .pf-tx { flex: 1; min-width: 0; }
+        .pf-tx small { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 3px; }
+        .pf-tx b { display: block; font-size: 15px; font-weight: 600; word-break: break-word; }
+        .pf-tx b.muted { color: var(--text-muted); font-weight: 400; }
+        .pf-edit { color: var(--accent); font-size: 15px; flex-shrink: 0; }
+        .pf-btns { display: flex; gap: 8px; margin: 6px 14px 18px; }
+        .pf-btns button { flex: 1; padding: 12px 8px; border-radius: 14px; font-weight: bold; font-size: 13px; cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-sec); color: var(--text-main); }
+        .pf-btns button.main { background: linear-gradient(135deg,var(--accent-2),var(--accent)); color: var(--on-accent); border: none; }
+        .pf-btns button.danger { color: var(--danger); }
+        #otherProfileView { display: none; flex-direction: column; height: 100%; width: 100%; position: absolute; top: 0; left: 0; background: var(--bg-main); z-index: 11; }
+
+        /* رسالة صغيرة بعد أي إجراء */
+        #snackBox { position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; align-items: center; width: 92%; max-width: 380px; pointer-events: none; }
+        .snack { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(26,30,37,.9); color: var(--text-main); border: 1px solid rgba(232,184,74,.55); border-radius: 16px; padding: 11px 16px; font-size: 13.5px; box-shadow: 0 8px 26px rgba(0,0,0,.5); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); animation: snackIn .22s ease; max-width: 100%; word-break: break-word; }
+        body.light-theme .snack { background: rgba(255,255,255,.94); }
+        .snack.warn { border-color: rgba(229,99,111,.7); }
+        .snack.out { opacity: 0; transform: translateY(8px); transition: all .25s; }
+        @keyframes snackIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+        /* قفل الكتابة في الجروب */
+        #roomLockBar { display: none; text-align: center; padding: 16px 12px; background: var(--bg-panel); border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 13px; flex-shrink: 0; }
+        .no-results { text-align: center; color: var(--text-muted); font-size: 13px; padding: 26px 14px; }
     </style>
 </head>
 <body>
@@ -350,13 +416,13 @@
         </div>
 
         <div id="loginFields" style="display: none;">
-            <input type="text" id="loginIdInput" placeholder="أدخل الـ ID الخاص بك">
+            <input type="text" id="loginIdInput" placeholder="أدخل الـ Username الخاص بك">
             <input type="password" id="loginPasswordInput" placeholder="كلمة السر">
             <button id="btnLogin">تسجيل الدخول</button>
         </div>
 
         <div class="auth-switch" id="switchModeBtn" onclick="toggleAuthMode()">
-            لديك حساب قديم؟ <span>تسجيل الدخول بالـ ID</span>
+            لديك حساب قديم؟ <span>تسجيل الدخول بالـ Username</span>
         </div>
     </div>
 
@@ -366,7 +432,7 @@
             <div id="statusIcon" class="status-icon">✓</div>
             <h3 id="statusTitle" style="margin:0 0 8px 0;"></h3>
             <p id="statusText" style="margin:0 0 14px 0; font-size:14px; color:var(--text-muted); white-space:pre-line; word-break:break-word;"></p>
-            <button id="statusCopyBtn" style="display:none; width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:8px; font-weight:bold; cursor:pointer; margin-bottom:8px;">📋 نسخ الـ ID</button>
+            <button id="statusCopyBtn" style="display:none; width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:8px; font-weight:bold; cursor:pointer; margin-bottom:8px;">📋 نسخ الـ Username</button>
             <button id="statusOkBtn" style="width:100%; background:var(--accent); border:none; padding:10px; color:white; border-radius:8px; font-weight:bold; cursor:pointer;">حسناً</button>
         </div>
     </div>
@@ -452,7 +518,7 @@
             <h3 id="chatOptionsTitle" style="color:var(--accent); margin-top:0; font-size:15px;">خيارات الشات</h3>
             <button onclick="togglePinChat()" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">📌 تثبيت / إلغاء التثبيت</button>
              <button onclick="toggleMuteChat()" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">🔕 كتم / إلغاء كتم الإشعارات</button>
-             <button onclick="copyPartnerIdFromOptions()" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">📋 نسخ الـ ID</button>
+             <button onclick="copyPartnerIdFromOptions()" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">📋 نسخ الـ Username</button>
             <button onclick="blockUserFromChat()" id="blockChatBtn" style="width:100%; background:var(--bg-input); border:1px solid var(--border-color); padding:10px; color:var(--text-main); border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">🚫 حظر الشخص</button>
             <button onclick="deleteChatExternalConfirmed()" style="width:100%; background:var(--danger); border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px;">🗑️ حذف الشات</button>
             <button onclick="closeModal('chatOptionsModal')" style="width:100%; background:#3d4a52; border:none; padding:10px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">إلغاء</button>
@@ -499,66 +565,29 @@
         </div>
     </div>
 
-    <!-- نافذة البروفايل -->
-    <div id="profileModal" class="modal-overlay">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="color: var(--accent); margin: 0;">👤 البروفايل</h3>
-                <button onclick="closeModal('profileModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer;">✕</button>
-            </div>
-            <div style="text-align:center; margin-bottom:15px;">
-                <div class="avatar" id="profileModalAvatar" style="width:80px; height:80px; font-size:30px; margin:0 auto; cursor:pointer;" onclick="viewMyAvatar()"></div>
-                <span style="font-size:12px; color:var(--text-muted); display:block; margin-top:5px;">اضغط على الصورة لعرضها</span>
-                <button onclick="copyMyId()" style="background:var(--bg-input); border:1px solid var(--border-color); color:var(--accent); padding:6px 12px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer; margin-top:10px;">📋 نسخ الـ ID الخاص بي</button>
-            </div>
-            <div class="setting-group">
-                <label>تغيير صورة البروفايل:</label>
-                <input type="file" id="profileImageFile" accept="image/*" style="padding:6px;">
-                <button onclick="uploadProfileImage()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:5px;">حفظ الصورة</button>
-            </div>
-            <div class="setting-group">
-                <label>تغيير الـ ID (إنجليزي صغير وأرقام و _ ، من 4 لـ 20):</label>
-                <input type="text" id="newHandleInput" placeholder="الـ ID الجديد" maxlength="20" autocapitalize="none" autocomplete="off">
-                <button onclick="changeMyHandle()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تغيير الـ ID</button>
-            </div>
-            <div class="setting-group">
-                <label>تغيير اللقب:</label>
-                <input type="text" id="settingsNicknameInput" placeholder="اللقب الجديد" maxlength="30">
-                <button onclick="updateProfileNickname()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تحديث اللقب</button>
-            </div>
-            <div class="setting-group" style="border:none; margin-bottom:0; padding-bottom:0;">
-                <label>تغيير كلمة السر:</label>
-                <input type="password" id="settingsPasswordInput" placeholder="كلمة السر الجديدة">
-                <button onclick="updatePassword()" style="width:100%; background:var(--accent); border:none; padding:8px; color:white; border-radius:6px; font-weight:bold; cursor:pointer;">تحديث كلمة السر</button>
+    <input type="file" id="profileImageFile" accept="image/*" style="display:none;" onchange="uploadProfileImage()">
+
+    <!-- نافذة تعديل حقل -->
+    <div id="editFieldModal" class="modal-overlay" style="z-index:2800;">
+        <div class="modal-content" style="max-width:340px;">
+            <h3 id="editFieldTitle" style="margin:0 0 6px 0; font-size:16px;"></h3>
+            <input type="text" id="editFieldInput" autocomplete="off" autocapitalize="none" onkeypress="if(event.key==='Enter') saveEditField()">
+            <div id="editFieldHint" style="font-size:12px; color:var(--text-muted); min-height:16px;"></div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <button onclick="saveEditField()" style="flex:2; background:linear-gradient(135deg,var(--accent-2),var(--accent)); color:var(--on-accent); border:none; padding:11px; border-radius:12px; font-weight:bold; cursor:pointer;">حفظ</button>
+                <button onclick="closeModal('editFieldModal')" style="flex:1; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); padding:11px; border-radius:12px; cursor:pointer;">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة الأصدقاء -->
-    <div id="friendsModal" class="modal-overlay">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="color: var(--accent); margin: 0;">👥 الأصدقاء</h3>
-                <button onclick="closeModal('friendsModal')" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer;">✕</button>
-            </div>
-
-            <div class="setting-group">
-                <label>➕ إضافة صديق بالـ ID:</label>
-                <div style="display:flex; gap:6px; align-items:center;">
-                    <input type="text" id="addFriendInput" placeholder="اكتب الـ ID هنا" style="margin:0; flex:1;" onkeypress="if(event.key==='Enter') searchFriendToAdd()">
-                    <button class="btn-accept" onclick="searchFriendToAdd()" style="flex-shrink:0; padding:9px 14px;">بحث</button>
-                </div>
-                <div id="addFriendResult" style="margin-top:8px; font-size:13px; color:var(--text-muted);"></div>
-            </div>
-
-            <label style="font-size:13px; color:var(--text-muted); font-weight:bold;">أصدقائي:</label>
-            <div id="friendsListContainer" style="max-height:250px; overflow-y:auto;"></div>
-
-            <div id="blockedSection" style="display:none; margin-top:14px;">
-                <label style="font-size:13px; color:var(--text-muted); font-weight:bold;">🚫 المحظورون:</label>
-                <div id="blockedListContainer" style="margin-top:6px;"></div>
-            </div>
+    <!-- صفحة بروفايل شخص تاني -->
+    <div id="otherProfileView">
+        <div class="chat-header">
+            <button id="btnBackFromProfile" onclick="closeOtherProfile()" style="width:40px; height:40px; background:var(--bg-sec); border:1px solid var(--border-color); border-radius:14px; color:var(--accent); font-size:16px; font-weight:bold; cursor:pointer;">→</button>
+            <h3 id="opTitle">البروفايل</h3>
+            <span style="width:40px;"></span>
         </div>
+        <div class="tab-scroll" id="opBody"></div>
     </div>
 
     <!-- نافذة طلبات المراسلة -->
@@ -626,12 +655,13 @@
     </div>
 
     <div id="toastBox"></div>
+    <div id="snackBox"></div>
 
     <!-- لوحة التحكم الرئيسية -->
     <div id="mainDashboard" style="display: none; flex-direction: column; height: 100%; width: 100%;">
-        <div class="chat-header">
+        <div class="chat-header" id="dashHeader">
             <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-                <div class="avatar" id="myHeaderAvatar" style="width:38px;height:38px;font-size:14px; cursor:pointer; margin-left:0;" onclick="viewMyAvatar()"></div>
+                <div class="avatar" id="myHeaderAvatar" style="width:38px;height:38px;font-size:14px; cursor:pointer; margin-left:0;" onclick="showTab('profile')"></div>
                 <div style="min-width: 0;">
                     <h3 id="userBadge" style="margin:0; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></h3>
                     <span id="myUserIdBadge" style="font-size:11px; color:var(--accent); cursor:pointer;" onclick="copyMyId()" title="اضغط للنسخ"></span>
@@ -639,19 +669,19 @@
             </div>
             <div class="header-actions">
                 <button class="btn-icon" onclick="openModal('requestsModal')" style="font-size:18px;" title="الإشعارات">
-                    🔔
+                    <svg class="svgi" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2H4.5z"/><path d="M10 21h4"/></svg>
                     <span class="badge-dot" id="requestsBadgeDot">0</span>
                 </button>
-                <button class="btn-icon" onclick="openModal('settingsModal')" style="font-size:18px;" title="الإعدادات">⚙️</button>
+                <button class="btn-icon" onclick="openModal('settingsModal')" style="font-size:18px;" title="الإعدادات"><svg class="svgi" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg></button>
             </div>
         </div>
 
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="ابحث بالـ ID لإرسال طلب مراسلة..." oninput="searchUsersById(this.value)">
+        <div class="search-bar" id="dashSearch">
+            <input type="text" id="searchInput" placeholder="ابحث في الشاتات أو بـ Username..." oninput="onSearchInput(this.value)">
         </div>
 
         <div id="searchResultsSection" class="search-results-section">
-            <h4 style="margin: 0 0 8px 0; font-size: 13px; color: var(--accent);">نتيجة البحث:</h4>
+            <h4 style="margin: 0 0 8px 0; font-size: 13px; color: var(--accent);">مستخدم بهذا الـ Username:</h4>
             <div id="searchResultsList"></div>
         </div>
 
@@ -664,12 +694,44 @@
             <div id="acceptedChatsList"></div>
         </div>
 
+        <!-- صفحات التبويبات -->
+        <div id="tabStories" class="tab-page">
+            <div class="tab-head"><h2>الاستوريات</h2></div>
+            <div class="soon-box"><div class="soon-ic"><svg class="svgi" width="54" height="54" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="3.2 2.6"/><circle cx="12" cy="12" r="3.2"/></svg></div><b>الاستوريات قريباً</b><small>هتقدر تنزّل صورة أو فيديو يفضل 24 ساعة ويشوفه أصحابك.</small></div>
+        </div>
+
+        <div id="tabFriends" class="tab-page">
+            <div class="tab-head"><h2>الأصدقاء</h2><button class="btn-icon" onclick="toggleAddFriend()" title="إضافة صديق"><svg class="svgi" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+            <div class="search-bar"><input type="text" id="friendsSearch" placeholder="ابحث في أصدقائك..." oninput="filterFriends(this.value)"></div>
+            <div id="addFriendBox" class="pf-card" style="display:none; margin:6px 14px;">
+                <label style="display:block; font-size:13px; color:var(--text-muted); font-weight:bold; margin-bottom:6px;">إضافة صديق بالـ Username:</label>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <input type="text" id="addFriendInput" placeholder="اكتب الـ Username هنا" autocapitalize="none" style="margin:0; flex:1; padding:10px; background:var(--bg-input); border:1px solid var(--input-border); color:var(--text-main); border-radius:12px; outline:none; box-sizing:border-box;" onkeypress="if(event.key==='Enter') searchFriendToAdd()">
+                    <button class="btn-accept" onclick="searchFriendToAdd()" style="flex-shrink:0; padding:10px 14px; border-radius:12px;">بحث</button>
+                </div>
+                <div id="addFriendResult" style="margin-top:8px; font-size:13px; color:var(--text-muted);"></div>
+            </div>
+            <div class="tab-scroll">
+                <div id="friendsListContainer"></div>
+                <div id="blockedSection" style="display:none; margin:14px;">
+                    <label style="font-size:13px; color:var(--text-muted); font-weight:bold;">🚫 المحظورون:</label>
+                    <div id="blockedListContainer" style="margin-top:6px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabProfile" class="tab-page">
+            <div class="tab-head"><h2>البروفايل</h2><button class="btn-icon" onclick="openModal('settingsModal')" title="الإعدادات"><svg class="svgi" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg></button></div>
+            <div class="tab-scroll" id="myProfileBody"></div>
+        </div>
+
         <!-- الشريط السفلي -->
         <div class="bottom-nav-bar" id="bottomNav">
-            <button class="nav-btn active" id="navChats" onclick="goChatsTab()"><span class="ni">💬</span>الشاتات</button>
-            <button class="nav-btn" onclick="openFriendsModal()"><span class="ni">👥</span>الأصدقاء</button>
-            <button class="nav-btn" onclick="openModal('requestsModal')"><span class="ni">📩</span>الطلبات</button>
-            <button class="nav-btn" onclick="openModal('profileModal')"><span class="ni">👤</span>البروفايل</button>
+            <button class="nav-btn active" data-tab="chats" onclick="showTab('chats')"><span class="ni"><svg class="svgi" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v11H10l-4.5 3.5v-3.5H4z"/></svg></span>الشاتات</button>
+            <button class="nav-btn" data-tab="stories" onclick="showTab('stories')"><span class="ni"><svg class="svgi" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="3.2 2.6"/><circle cx="12" cy="12" r="3.2"/></svg></span>الاستوريات</button>
+            <button class="nav-btn" data-tab="friends" onclick="showTab('friends')"><span class="ni"><svg class="svgi" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c0-3.4 2.7-5.3 6-5.3s6 1.9 6 5.3"/><circle cx="17.2" cy="9" r="2.4"/><path d="M17 14.3c2.4 0 4 1.3 4 3.9"/></svg></span>الأصدقاء</button>
+            <button class="nav-btn" onclick="openModal('requestsModal')"><span class="ni"><svg class="svgi" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3.5"/><path d="M3.8 8l8.2 6 8.2-6"/></svg></span>الطلبات</button>
+            <button class="nav-btn" data-tab="profile" onclick="showTab('profile')"><span class="ni"><svg class="svgi" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-4 3.6-6.2 8-6.2s8 2.2 8 6.2"/></svg></span>البروفايل</button>
         </div>
 
         <button id="fabGroup" onclick="openModal('createGroupModal')" title="إنشاء جروب">+</button>
@@ -710,6 +772,8 @@
             <button onclick="clearReply()" title="إلغاء الرد">✕</button>
         </div>
 
+        <div id="roomLockBar">🔒 يمكن للمشرفين فقط الكتابة</div>
+
         <!-- صندوق إرسال الرسائل مع المرفقات -->
         <div class="room-input-box" id="roomInputBoxContainer">
             <input type="file" id="mediaFileInput" accept="audio/*,.pdf,.doc,.docx,.txt" style="display:none;" onchange="handleMediaUpload(this)">
@@ -741,7 +805,7 @@
     (function(){
         var fab=document.getElementById('fabGroup'), dash=document.getElementById('mainDashboard');
         if(!fab||!dash) return;
-        new MutationObserver(function(){ fab.style.display = dash.style.display==='none' ? 'none' : 'block'; })
+        new MutationObserver(function(){ fab.style.display = (dash.style.display==='none' || (window.__curTab && window.__curTab!=='chats')) ? 'none' : 'block'; })
             .observe(dash,{attributes:true,attributeFilter:['style']});
     })();
 </script>
@@ -881,7 +945,7 @@
     const isSavedRoom = (rid) => !!myId && rid === `${myId}_${myId}`;
 
     function partnerFromChatId(chatId) {
-        // الـ IDs نفسها فيها "_" فمينفعش نعمل split
+        // الـ Usernames نفسها فيها "_" فمينفعش نعمل split
         if (chatId.startsWith(`${myId}_`)) return chatId.slice(myId.length + 1);
         if (chatId.endsWith(`_${myId}`)) return chatId.slice(0, -(myId.length + 1));
         return null;
@@ -946,6 +1010,18 @@
         return item;
     }
 
+    // رسالة صغيرة بتظهر بعد أي إجراء وتختفي لوحدها
+    function notify(msg, kind) {
+        const warn = kind === 'warn' || (kind === undefined && /تعذر|فشل|لا يمكن|لا يوجد|اختر|أدخل|اكتب|لازم|غير صالح|خاطئ|مش متاح|ممنوع/.test(String(msg)));
+        const box = $('snackBox');
+        if (!box) return;
+        const s = h('div', { class: 'snack' + (warn ? ' warn' : '') }, h('span', { style: 'font-size:18px;' }, warn ? '⚠️' : '✅'), h('span', {}, String(msg)));
+        box.appendChild(s);
+        while (box.children.length > 3) box.firstChild.remove();
+        setTimeout(() => { s.classList.add('out'); setTimeout(() => s.remove(), 300); }, 2800);
+    }
+    window.notify = notify;
+
     // نافذة الحالة: ✓ للصح / ✗ للخطأ (بترجع Promise بتتحل لما المستخدم يضغط "حسناً")
     function showStatus(ok, title, text = '', copyValue = null) {
         return new Promise((resolve) => {
@@ -958,7 +1034,7 @@
             $('statusText').textContent = text;
             const copyBtn = $('statusCopyBtn');
             copyBtn.style.display = copyValue ? 'block' : 'none';
-            copyBtn.onclick = () => copyToClipboard(copyValue, 'الـ ID');
+            copyBtn.onclick = () => copyToClipboard(copyValue, 'الـ Username');
             $('statusOkBtn').onclick = () => { closeModal('statusModal'); resolve(); };
             openModal('statusModal');
         });
@@ -984,7 +1060,7 @@
     };
     window.closeModal = function (id) { $(id).style.display = 'none'; };
 
-    window.copyToClipboard = async function (text, label = 'الـ ID') {
+    window.copyToClipboard = async function (text, label = 'الـ Username') {
         if (!text) return;
         try {
             await navigator.clipboard.writeText(text);
@@ -994,13 +1070,13 @@
             document.body.appendChild(ta);
             ta.select();
             try { document.execCommand('copy'); }
-            catch (e) { alert('فشل النسخ!'); ta.remove(); return; }
+            catch (e) { notify('فشل النسخ!'); ta.remove(); return; }
             ta.remove();
         }
-        alert(`تم نسخ ${label} بنجاح: ${text}`);
+        notify(`تم نسخ ${label} بنجاح: ${text}`);
     };
 
-    window.copyMyId = function () { if (myId) copyToClipboard(myHandle || myId, 'الـ ID الخاص بك'); };
+    window.copyMyId = function () { if (myId) copyToClipboard(myHandle || myId, 'الـ Username الخاص بك'); };
 
     window.viewFullScreenImage = function (src) {
         if (!validImg(src)) return;
@@ -1009,7 +1085,7 @@
     };
     window.viewMyAvatar = function () {
         if (myAvatar) viewFullScreenImage(myAvatar);
-        else alert('ليس لديك صورة بروفايل حالياً!');
+        else notify('ليس لديك صورة بروفايل حالياً!');
     };
 
     let activeRoomAvatarUrl = '';
@@ -1032,7 +1108,7 @@
         $('registerFields').style.display = isLogin ? 'block' : 'none';
         $('loginFields').style.display = isLogin ? 'none' : 'block';
         $('switchModeBtn').innerHTML = isLogin
-            ? 'لديك حساب قديم؟ <span>تسجيل الدخول بالـ ID</span>'
+            ? 'لديك حساب قديم؟ <span>تسجيل الدخول بالـ Username</span>'
             : 'ليس لديك حساب؟ <span>أنشئ حساب جديد</span>';
     };
 
@@ -1065,7 +1141,7 @@
             created = true;
 
             await showStatus(true, 'البيانات صحيحة',
-                `تم إنشاء حسابك بنجاح!\nمعرّفك (ID):\n${id}\nاحفظه لتسجيل الدخول لاحقاً.`, id);
+                `تم إنشاء حسابك بنجاح!\nالـ Username الخاص بك:\n${id}\nاحفظه لتسجيل الدخول لاحقاً.`, id);
         } catch (e) {
             console.error(e);
             await showStatus(false, 'تعذر إنشاء الحساب',
@@ -1079,8 +1155,8 @@
     $('btnLogin').onclick = async function () {
         let inputId = $('loginIdInput').value.trim();
         const inputPass = $('loginPasswordInput').value.trim();
-        if (!inputId || !inputPass) return showStatus(false, 'البيانات خاطئة', 'أدخل الـ ID وكلمة السر.');
-        if (!validId(inputId)) return showStatus(false, 'البيانات خاطئة', 'الـ ID أو كلمة السر غير صحيحة.');
+        if (!inputId || !inputPass) return showStatus(false, 'البيانات خاطئة', 'أدخل الـ Username وكلمة السر.');
+        if (!validId(inputId)) return showStatus(false, 'البيانات خاطئة', 'الـ Username أو كلمة السر غير صحيحة.');
 
         const btn = $('btnLogin');
         btn.disabled = true;
@@ -1090,7 +1166,7 @@
             inputId = await resolveId(inputId);
             const userSnap = await get(ref(db, `users_directory/${inputId}`));
             if (!userSnap.exists()) {
-                await showStatus(false, 'البيانات خاطئة', 'الـ ID أو كلمة السر غير صحيحة.');
+                await showStatus(false, 'البيانات خاطئة', 'الـ Username أو كلمة السر غير صحيحة.');
             } else {
                 const u = userSnap.val();
                 let pass = false;
@@ -1105,7 +1181,7 @@
                     });
                 }
                 if (!pass) {
-                    await showStatus(false, 'البيانات خاطئة', 'الـ ID أو كلمة السر غير صحيحة.');
+                    await showStatus(false, 'البيانات خاطئة', 'الـ Username أو كلمة السر غير صحيحة.');
                 } else {
                     myId = u.userId;
                     savedNickname = u.nickname;
@@ -1141,9 +1217,11 @@
         $('authScreen').style.display = 'none';
         $('mainDashboard').style.display = 'flex';
         $('userBadge').textContent = savedNickname;
-        $('myUserIdBadge').textContent = `ID: ${myHandle || myId} (📋 نسخ)`;
+        $('myUserIdBadge').textContent = `‎@${myHandle || myId} (📋 نسخ)`;
         setAvatarContent($('myHeaderAvatar'), myAvatar, firstChar(savedNickname));
-        setAvatarContent($('profileModalAvatar'), myAvatar, firstChar(savedNickname));
+        myUser = u;
+        await loadNicknames();
+        renderMyProfile();
 
         setupPresence();
         loadChatBg();
@@ -1237,13 +1315,13 @@
         const file = input.files?.[0];
         input.value = '';
         if (!file) return;
-        if (!file.type.startsWith('image/')) return alert('الملف لازم يكون صورة!');
+        if (!file.type.startsWith('image/')) return notify('الملف لازم يكون صورة!');
         try {
             const value = await resizeImage(file, 1280, 0.75);
             await saveChatBg({ type: 'image', value });
         } catch (e) {
             console.error(e);
-            alert('تعذر استخدام هذه الصورة كخلفية.');
+            notify('تعذر استخدام هذه الصورة كخلفية.');
         }
     };
 
@@ -1268,66 +1346,14 @@
         } catch (e) { console.error(e); }
     }
 
-    // ================= البروفايل والإعدادات =================
-    window.uploadProfileImage = async function () {
-        const file = $('profileImageFile').files?.[0];
-        if (!file) return alert('اختر صورة أولاً!');
-        if (!file.type.startsWith('image/')) return alert('الملف لازم يكون صورة!');
-        try {
-            myAvatar = await resizeImage(file, 256, 0.85);
-            await set(ref(db, `users_directory/${myId}/avatar`), myAvatar);
-            setAvatarContent($('myHeaderAvatar'), myAvatar, firstChar(savedNickname));
-            setAvatarContent($('profileModalAvatar'), myAvatar, firstChar(savedNickname));
-            $('profileImageFile').value = '';
-            alert('تم تحديث صورة البروفايل!');
-            closeModal('profileModal');
-            loadAcceptedChats();
-        } catch (e) {
-            console.error(e);
-            alert('تعذر رفع الصورة.');
-        }
-    };
-
-    window.updateProfileNickname = async function () {
-        const newNick = $('settingsNicknameInput').value.trim();
-        if (!newNick) return alert('أدخل اللقب الجديد!');
-        savedNickname = newNick;
-        localStorage.setItem('nexus_nickname', savedNickname);
-        await set(ref(db, `users_directory/${myId}/nickname`), savedNickname);
-        $('userBadge').textContent = savedNickname;
-        if (!myAvatar) {
-            setAvatarContent($('myHeaderAvatar'), '', firstChar(savedNickname));
-            setAvatarContent($('profileModalAvatar'), '', firstChar(savedNickname));
-        }
-        $('settingsNicknameInput').value = '';
-        alert('تم تحديث اللقب!');
-        closeModal('profileModal');
-    };
-
-    window.updatePassword = async function () {
-        const newPass = $('settingsPasswordInput').value.trim();
-        if (!newPass) return alert('أدخل كلمة السر الجديدة!');
-        if (newPass.length < 4) return alert('كلمة السر لازم تكون 4 أحرف على الأقل!');
-        try {
-            await update(ref(db, `users_directory/${myId}`), {
-                passHash: await hashPassword(newPass, myId),
-                password: null
-            });
-        } catch (e) {
-            return alert(e.message === 'no-subtle' ? NO_CRYPTO_MSG : 'تعذر تحديث كلمة السر.');
-        }
-        $('settingsPasswordInput').value = '';
-        alert('تم تحديث كلمة السر!');
-        closeModal('profileModal');
-    };
-
+    // ================= البروفايل والإعدادات (الصفحة الجديدة تحت) =================
     window.submitReportOrSuggestion = async function () {
         const text = $('reportText').value.trim();
-        if (!text) return alert('اكتب نص البلاغ أو الاقتراح أولاً!');
+        if (!text) return notify('اكتب نص البلاغ أو الاقتراح أولاً!');
         await push(ref(db, `reports_and_suggestions/${OWNER_ID}`), {
             sender: savedNickname, senderId: myId, text, time: new Date().toLocaleTimeString(), timestamp: Date.now()
         });
-        alert('تم إرسال بلاغك أو اقتراحك للإدارة بنجاح!');
+        notify('تم إرسال بلاغك أو اقتراحك للإدارة بنجاح!');
         $('reportText').value = '';
         closeModal('settingsModal');
     };
@@ -1348,43 +1374,53 @@
         return a.exists() || b.exists();
     }
 
-    window.openFriendsModal = async function () {
-        openModal('friendsModal');
-        $('addFriendResult').replaceChildren();
-        await Promise.all([loadFriendsList(), loadBlockedList()]);
-    };
+    // ---------- صفحة الأصدقاء ----------
+    let friendsCache = [], friendsQ = '';
+    window.openFriendsModal = function () { showTab('friends'); };
 
     async function loadFriendsList() {
         const container = $('friendsListContainer');
-        container.textContent = 'جاري التحميل...';
+        if (!friendsCache.length) container.textContent = 'جاري التحميل...';
         try {
             const friendsSnap = await get(ref(db, `friends/${myId}`));
             const ids = friendsSnap.exists() ? Object.keys(friendsSnap.val()) : [];
             const users = await Promise.all(ids.map(id => get(ref(db, `users_directory/${id}`))));
-            const items = [];
-            for (const s of users) {
-                if (!s.exists()) continue;
-                const f = s.val();
-                const item = buildChatItem({
-                    avatarUrl: f.avatar, fallback: firstChar(f.nickname), name: f.nickname,
-                    sub: `ID: ${f.handle || f.userId}`, online: !!f.online
-                });
-                item.addEventListener('click', () => startDirectChat(f.userId, f.nickname));
-                item.appendChild(h('div', { style: 'display:flex; gap:6px; flex-shrink:0; margin-right:6px;' },
-                    h('button', { class: 'btn-neutral', title: 'نسخ الـ ID', onclick: (e) => { e.stopPropagation(); copyToClipboard(f.handle || f.userId, 'الـ ID'); } }, '📋'),
-                    h('button', { class: 'btn-reject', style: 'margin:0;', title: 'حذف صديق', onclick: (e) => { e.stopPropagation(); removeFriend(f.userId, f.nickname); } }, '🗑️')));
-                items.push(item);
-            }
-            if (!items.length) {
-                container.replaceChildren(h('p', { style: 'text-align:center; color:var(--text-muted); font-size:13px;' }, 'لا توجد أصدقاء بعد'));
-            } else {
-                container.replaceChildren(...items);
-            }
+            friendsCache = users.filter((s) => s.exists()).map((s) => s.val());
+            renderFriends();
         } catch (e) {
             console.error(e);
             container.textContent = 'تعذر تحميل الأصدقاء.';
         }
     }
+
+    function renderFriends() {
+        const container = $('friendsListContainer');
+        const q = friendsQ;
+        const list = friendsCache
+            .filter((f) => !q || `${nickOf(f.userId, f.nickname)} ${f.nickname} ${f.handle || ''}`.toLowerCase().includes(q))
+            .sort((a, b) => nickOf(a.userId, a.nickname).localeCompare(nickOf(b.userId, b.nickname), 'ar'));
+        if (!list.length) {
+            container.replaceChildren(h('div', { class: 'no-results' }, q ? 'مفيش أصدقاء بالاسم ده' : 'لا توجد أصدقاء بعد. اضغط ➕ لإضافة صديق.'));
+            return;
+        }
+        container.replaceChildren(...list.map((f) => {
+            const name = nickOf(f.userId, f.nickname);
+            const item = buildChatItem({
+                avatarUrl: f.avatar, fallback: firstChar(name), name,
+                sub: (f.online ? 'متصل الآن · ' : '') + `‎@${f.handle || f.userId}`, online: !!f.online
+            });
+            item.addEventListener('click', () => startDirectChat(f.userId, name));
+            item.querySelector('.avatar').addEventListener('click', (e) => { e.stopPropagation(); openUserProfile(f.userId); }, true);
+            return item;
+        }));
+    }
+
+    window.filterFriends = function (q) { friendsQ = (q || '').trim().toLowerCase(); renderFriends(); };
+    window.toggleAddFriend = function () {
+        const b = $('addFriendBox');
+        b.style.display = b.style.display === 'none' ? 'block' : 'none';
+        if (b.style.display === 'block') { $('addFriendResult').replaceChildren(); $('addFriendInput').focus(); }
+    };
 
     async function loadBlockedList() {
         const sec = $('blockedSection');
@@ -1428,15 +1464,15 @@
         const box = $('addFriendResult');
         box.replaceChildren();
         if (!id) return;
-        if (id === myId) { box.textContent = 'ده الـ ID الخاص بك 😄'; return; }
-        if (!validId(id)) { box.textContent = 'الـ ID غير صالح.'; return; }
+        if (id === myId) { box.textContent = 'ده الـ Username الخاص بك 😄'; return; }
+        if (!validId(id)) { box.textContent = 'الـ Username غير صالح.'; return; }
         box.textContent = 'جاري البحث...';
         try {
             const [snap, fr] = await Promise.all([
                 get(ref(db, `users_directory/${id}`)),
                 get(ref(db, `friends/${myId}/${id}`))
             ]);
-            if (!snap.exists()) { box.textContent = 'لا يوجد مستخدم بهذا الـ ID.'; return; }
+            if (!snap.exists()) { box.textContent = 'لا يوجد مستخدم بهذا الـ Username.'; return; }
             const u = snap.val();
             const action = fr.exists()
                 ? h('span', { style: 'color:var(--accent); font-weight:bold;' }, '✓ صديق بالفعل')
@@ -1457,8 +1493,7 @@
     }
 
     window.startDirectChat = async function (userId, nickname) {
-        closeModal('friendsModal');
-        if (!isOwner() && await isChatBlocked(userId)) return alert('لا يمكنك مراسلة هذا الشخص.');
+        if (!isOwner() && await isChatBlocked(userId)) return notify('لا يمكنك مراسلة هذا الشخص.');
         const chatId = [myId, userId].sort().join('_');
         await touchAcceptedChats(chatId, userId);
         openRoom(chatId, nickname, 'private', userId);
@@ -1532,14 +1567,14 @@
             [`friends/${senderId}/${myId}`]: true,
             [`message_requests/${myId}/${senderId}`]: null
         });
-        alert('تم قبول الطلب وإضافته للأصدقاء!');
+        notify('تم قبول الطلب وإضافته للأصدقاء!');
         loadRealtimeNotifications();
         loadAcceptedChats();
     };
 
     window.rejectMsgReq = async function (senderId) {
         await remove(ref(db, `message_requests/${myId}/${senderId}`));
-        alert('تم رفض الطلب.');
+        notify('تم رفض الطلب.');
         loadRealtimeNotifications();
     };
 
@@ -1555,7 +1590,7 @@
         const list = $('searchResultsList');
         const id = (q || '').trim();
         list.replaceChildren();
-        // الـ ID فيه رموز ممنوعة في مسارات Firebase (. # $ [ ]) فنتحقق الأول
+        // الـ Username فيه رموز ممنوعة في مسارات Firebase (. # $ [ ]) فنتحقق الأول
         if (!id || id === myId || !validId(id)) { sec.style.display = 'none'; return; }
         try {
             const snap = await get(ref(db, `users_directory/${await resolveId(id)}`));
@@ -1565,7 +1600,7 @@
                 ? h('button', { class: 'btn-accept', onclick: () => startDirectChat(u.userId, u.nickname) }, 'مراسلة مباشرة (صلاحية مالك)')
                 : h('button', { class: 'btn-accept', onclick: () => sendMsgReq(u.userId) }, 'إرسال طلب مراسلة');
             list.appendChild(h('div', { class: 'request-card' },                h('span', {}, `${u.nickname} (`,
-                    h('span', { style: 'color:var(--accent); cursor:pointer;', onclick: () => copyToClipboard(u.handle || u.userId, 'الـ ID') }, `${u.handle || u.userId} 📋`),
+                    h('span', { style: 'color:var(--accent); cursor:pointer;', onclick: () => copyToClipboard(u.handle || u.userId, 'الـ Username') }, `${u.handle || u.userId} 📋`),
                     ')'),
                 actionBtn));
             sec.style.display = 'block';
@@ -1582,13 +1617,13 @@
                 get(ref(db, `friends/${myId}/${targetId}`)),
                 isChatBlocked(targetId)
             ]);
-            if (blocked) return alert('لا يمكن إرسال طلب لهذا المستخدم.');
-            if (friend.exists()) return alert('هذا الشخص موجود بالفعل في أصدقائك.');
+            if (blocked) return notify('لا يمكن إرسال طلب لهذا المستخدم.');
+            if (friend.exists()) return notify('هذا الشخص موجود بالفعل في أصدقائك.');
             await set(ref(db, `message_requests/${targetId}/${myId}`), { senderId: myId, senderName: savedNickname });
-            alert('تم إرسال الطلب بنجاح!');
+            notify('تم إرسال الطلب بنجاح!');
         } catch (e) {
             console.error(e);
-            alert('تعذر إرسال الطلب.');
+            notify('تعذر إرسال الطلب.');
         }
     };
 
@@ -1596,12 +1631,12 @@
     window.createGroupAction = async function () {
         const name = $('groupNameInput').value.trim();
         const desc = $('groupDescInput').value.trim();
-        if (!name) return alert('أدخل اسم الجروب!');
+        if (!name) return notify('أدخل اسم الجروب!');
         try {
             let groupImg = '';
             const file = $('groupImageFile').files?.[0];
             if (file) {
-                if (!file.type.startsWith('image/')) return alert('الملف لازم يكون صورة!');
+                if (!file.type.startsWith('image/')) return notify('الملف لازم يكون صورة!');
                 groupImg = await resizeImage(file, 256, 0.85);
             }
             const groupId = 'group_' + Math.random().toString(36).substring(2, 10);
@@ -1614,17 +1649,17 @@
             $('groupNameInput').value = '';
             $('groupDescInput').value = '';
             $('groupImageFile').value = '';
-            alert('تم إنشاء الجروب بنجاح!');
+            notify('تم إنشاء الجروب بنجاح!');
             closeModal('createGroupModal');
             loadGroupsList();
         } catch (e) {
             console.error(e);
-            alert('تعذر إنشاء الجروب.');
+            notify('تعذر إنشاء الجروب.');
         }
     };
 
     // ================= قائمة الشاتات (خاص + جروبات) مرتبة بآخر رسالة =================
-    let privCache = [], grpCache = [], inbox = {};
+    let privCache = [], grpCache = [], inbox = {}, searchQ = '';
     const roomIsOpen = (id) => id === currentRoomId && $('chatRoomView').style.display === 'flex';
 
     function renderChatList() {
@@ -1632,22 +1667,26 @@
             .map((c) => { const ib = inbox[c.id]; return { c, ib, ts: Math.max(c.time || 0, ib?.ts || 0) }; })
             .sort((a, b) => ((b.c.saved ? 2 : isPinned(b.c.id)) - (a.c.saved ? 2 : isPinned(a.c.id))) || (b.ts - a.ts));
         let total = 0;
-        const items = all.map(({ c, ib }) => {
+        for (const { c, ib } of all) if (!roomIsOpen(c.id)) total += (ib?.unread || 0);
+        const q = searchQ;
+        const shown = q ? all.filter(({ c }) => `${shownName(c)} ${c.name} ${c.handle || ''} ${c.desc || ''}`.toLowerCase().includes(q)) : all;
+        total = 0;
+        const items = shown.map(({ c, ib }) => {
             const unread = roomIsOpen(c.id) ? 0 : (ib?.unread || 0);
             total += unread;
-            let sub = c.type === 'group' ? (c.desc || 'جروب تفاعلي') : `ID: ${c.handle || c.partnerId}`;
-            if (ib?.text) sub = (ib.senderId === myId ? 'أنت: ' : (c.type === 'group' ? `${ib.sender}: ` : '')) + ib.text;
+            let sub = c.type === 'group' ? (c.desc || 'جروب تفاعلي') : `‎@${c.handle || c.partnerId}`;
+            if (ib?.text) sub = (ib.senderId === myId ? 'أنت: ' : (c.type === 'group' ? `${nickOf(ib.senderId, ib.sender)}: ` : '')) + ib.text;
             if (c.saved) sub = ib?.text || 'احفظ ملاحظات وصور وملفات لنفسك';
             const item = buildChatItem(c.type === 'group'
                 ? { avatarUrl: c.avatar, fallback: '👥', name: dispName(c), sub, bg: '#1f2c34', time: ib?.ts, unread }
                 : { avatarUrl: c.avatar, fallback: c.saved ? '🔖' : (c.hasUser ? firstChar(c.name) : '💬'), name: dispName(c), sub, bg: c.saved ? '#b7791f' : undefined, time: ib?.ts, unread });
             attachLongPress(item,
-                () => { if (!c.saved) showChatOptions(c.id, c.name, c.type, c.type === 'group' ? c.id : c.key, c.partnerId || null); },
-                () => openRoom(c.id, c.name, c.type, c.partnerId || null));
+                () => { if (!c.saved) showChatOptions(c.id, shownName(c), c.type, c.type === 'group' ? c.id : c.key, c.partnerId || null); },
+                () => openRoom(c.id, shownName(c), c.type, c.partnerId || null));
             return item;
         });
         $('groupsListContainer').replaceChildren();
-        $('acceptedChatsList').replaceChildren(...items);
+        $('acceptedChatsList').replaceChildren(...(items.length || !q ? items : [h('div', { class: 'no-results' }, 'مفيش شاتات بالاسم ده')]));
         document.title = (total ? `(${total}) ` : '') + 'Z-Chat - التطبيق المتطور';
     }
 
@@ -1734,7 +1773,7 @@
         if (!c) { await Promise.all([loadAcceptedChats(), loadGroupsList()]); c = findChat(rid); }
         if (!c) return; // محذوف أو محظور
         const body = (c.type === 'group' ? `${v.sender}: ` : '') + (v.text || '');
-        pushNotify(c.name, body, () => openRoom(c.id, c.name, c.type, c.partnerId || null));
+        pushNotify(c.name, body, () => openRoom(c.id, shownName(c), c.type, c.partnerId || null));
     }
 
     function clearUnread(rid) {
@@ -1801,10 +1840,10 @@
 
     window.copyPartnerIdFromOptions = function () {
         if (selectedChatType === 'private' && activePartnerUserId) {
-            copyToClipboard(activePartnerUserId, 'الـ ID');
+            copyToClipboard(activePartnerUserId, 'الـ Username');
             closeModal('chatOptionsModal');
         } else {
-            alert('هذا الشات عبارة عن جروب أو لا يوجد ID مباشر له.');
+            notify('هذا الشات عبارة عن جروب أو لا يوجد ID مباشر له.');
         }
     };
 
@@ -1887,6 +1926,7 @@
         $('roomTitleName').textContent = (isSavedRoom(roomId) ? '🔖 ' : '') + roomName;
         $('btnGroupMenu').style.display = type === 'group' ? '' : 'none';
         $('roomInputBoxContainer').style.display = 'flex';
+        $('roomLockBar').style.display = 'none';
         const roomAvatarBox = $('roomAvatarBox');
         roomAvatarBox.style.display = 'none';
         const box = $('roomMessagesBox');
@@ -1995,11 +2035,11 @@
             id: `msg_${msgId}`,
             class: 'message-bubble' + (data.senderId === myId ? ' my-msg' : '')
         });
-        bubble.appendChild(h('b', {}, `${data.sender}: `));
+        bubble.appendChild(h('b', {}, `${nickOf(data.senderId, data.sender)}: `));
 
         if (data.reply && data.reply.id) {
             const q = h('div', { class: 'reply-quote' },
-                h('b', {}, data.reply.senderId === myId ? 'أنت' : (data.reply.sender || '')),
+                h('b', {}, data.reply.senderId === myId ? 'أنت' : nickOf(data.reply.senderId, data.reply.sender || '')),
                 h('span', {}, String(data.reply.text || '')));
             q.addEventListener('click', (e) => { e.stopPropagation(); jumpToMsg(data.reply.id); });
             bubble.appendChild(q);
@@ -2065,12 +2105,12 @@
         document.body.style.cursor = 'progress';
         try {
             const url = await loadMediaBlobUrl(data.mediaId, data.type);
-            if (!url) return alert('المرفق غير متاح (ربما تم حذفه).');
+            if (!url) return notify('المرفق غير متاح (ربما تم حذفه).');
             if (data.type === 'file') triggerDownload(url, data.fileName);
             else showViewer(data.type, url, data.fileName, false);
         } catch (e) {
             console.error(e);
-            alert('تعذر تحميل المرفق.');
+            notify('تعذر تحميل المرفق.');
         } finally {
             document.body.style.cursor = '';
         }
@@ -2086,11 +2126,11 @@
             const snap = await get(ref(db, `chat_media/${data.mediaId}`));
             if (!snap.exists()) {
                 await update(ref(db), { [`${base}/viewed`]: true });
-                return alert('انتهت صلاحية هذا المرفق.');
+                return notify('انتهت صلاحية هذا المرفق.');
             }
             const sv = snap.val();
             const durl = sv.url || sv.data;
-            if (!dataUrlValidFor(data.type, durl)) return alert('المرفق غير صالح.');
+            if (!dataUrlValidFor(data.type, durl)) return notify('المرفق غير صالح.');
             let viewUrl;
             try { viewUrl = URL.createObjectURL(await (await fetch(durl)).blob()); }
             catch (e) { viewUrl = durl; } // لو الـ fetch اترفض نعرض الرابط مباشرة
@@ -2103,7 +2143,7 @@
             showViewer(data.type, viewUrl, data.fileName, true);
         } catch (e) {
             console.error(e);
-            alert('تعذر فتح المرفق.');
+            notify('تعذر فتح المرفق.');
         } finally {
             openingOnce.delete(msgId);
             document.body.style.cursor = '';
@@ -2280,7 +2320,7 @@
         if (currentRoomType === 'private') {
             const partnerId = activePartnerUserId || partnerFromChatId(currentRoomId);
             if (partnerId && partnerId !== myId && !isOwner() && await isChatBlocked(partnerId)) {
-                alert('لا يمكنك مراسلة هذا الشخص.');
+                notify('لا يمكنك مراسلة هذا الشخص.');
                 return false;
             }
         }
@@ -2303,7 +2343,7 @@
         } catch (e) {
             console.error(e);
             input.value = text;
-            alert('تعذر إرسال الرسالة.');
+            notify('تعذر إرسال الرسالة.');
         }
     }
 
@@ -2326,7 +2366,7 @@
         const isGif = file.type === 'image/gif';
         const limit = kind === 'image' ? (isGif ? LIMITS.gif : LIMITS.imageSource) : LIMITS[kind];
         if (file.size > limit) {
-            return alert(`حجم الملف كبير! الحد الأقصى ${fmtSize(limit)}.`);
+            return notify(`حجم الملف كبير! الحد الأقصى ${fmtSize(limit)}.`);
         }
 
         closeSendMedia();
@@ -2403,7 +2443,7 @@
             console.error(e);
             if (mediaId) { remove(ref(db, `chat_media/${mediaId}`)).catch(() => {}); }
             const em = String((e && e.message) || e || '');
-            alert(em.startsWith('cloudinary:') ? 'تعذر رفع الملف: ' + em.slice(11)
+            notify(em.startsWith('cloudinary:') ? 'تعذر رفع الملف: ' + em.slice(11)
                 : em === 'network' ? 'تعذر رفع الملف، تأكد من الاتصال بالإنترنت.'
                 : 'تعذر إرسال الملف: ' + em);
         } finally {
@@ -2413,8 +2453,8 @@
         }
     };
 
-    // ================= الـ ID القابل للتغيير (handle) =================
-    // الـ ID الداخلي (user_xxx) ثابت عشان الشاتات والجروبات متتكسرش، والـ ID الظاهر هو الـ handle.
+    // ================= الـ Username القابل للتغيير (handle) =================
+    // الـ Username الداخلي (user_xxx) ثابت عشان الشاتات والجروبات متتكسرش، والـ Username الظاهر هو الـ handle.
     async function resolveId(s) {
         const k = String(s).toLowerCase();
         if (!/^[a-z0-9_]{4,20}$/.test(k)) return s;
@@ -2424,30 +2464,36 @@
 
     async function loadMyHandle() {
         try { myHandle = (await get(ref(db, `users_directory/${myId}/handle`))).val() || ''; } catch (e) {}
-        $('myUserIdBadge').textContent = `ID: ${myHandle || myId} (📋 نسخ)`;
+        $('myUserIdBadge').textContent = `‎@${myHandle || myId} (📋 نسخ)`;
+        renderMyProfile();
     }
 
-    window.changeMyHandle = async function () {
-        const nh = $('newHandleInput').value.trim().toLowerCase();
-        if (!/^[a-z0-9_]{4,20}$/.test(nh) || nh.startsWith('user_'))
-            return showStatus(false, 'ID غير صالح', 'استخدم من 4 لـ 20 حرف إنجليزي صغير أو أرقام أو _ ، ومينفعش يبدأ بـ user_.');
+    // بيرجّع true لو اتغير فعلاً
+    async function changeMyHandle(val) {
+        const nh = String(val || '').trim().toLowerCase();
+        if (!/^[a-z0-9_]{4,20}$/.test(nh) || nh.startsWith('user_')) {
+            showStatus(false, 'Username غير صالح', 'استخدم من 4 لـ 20 حرف إنجليزي صغير أو أرقام أو _ ، ومينفعش يبدأ بـ user_.');
+            return false;
+        }
         try {
             const cur = (await get(ref(db, `users_directory/${myId}/handle`))).val();
-            if (cur === nh) return showStatus(false, 'نفس الـ ID', 'ده الـ ID الحالي بتاعك.');
+            if (cur === nh) { notify('ده الـ Username الحالي بتاعك.', 'warn'); return false; }
             const taken = (await get(ref(db, `users_directory/${nh}`))).exists();
             const res = taken ? { committed: false }
                 : await runTransaction(ref(db, `handles/${nh}`), (v) => (v === null || v === myId) ? myId : undefined);
-            if (!res.committed) return showStatus(false, 'الـ ID مش متاح', 'الـ ID ده مستخدم بالفعل، جرّب واحد تاني.');
+            if (!res.committed) { notify('الـ Username ده مستخدم بالفعل، جرّب واحد تاني.', 'warn'); return false; }
             await update(ref(db), { [`users_directory/${myId}/handle`]: nh, ...(cur ? { [`handles/${cur}`]: null } : {}) });
             myHandle = nh;
-            $('newHandleInput').value = '';
-            $('myUserIdBadge').textContent = `ID: ${nh} (📋 نسخ)`;
-            showStatus(true, 'تم تغيير الـ ID', `الـ ID الجديد بتاعك:\n${nh}`, nh);
+            $('myUserIdBadge').textContent = `‎@${nh} (📋 نسخ)`;
+            renderMyProfile();
+            notify('تم تغيير الـ Username');
+            return true;
         } catch (e) {
             console.error(e);
-            showStatus(false, 'تعذر تغيير الـ ID', 'تأكد من الاتصال بالإنترنت وحاول تاني.');
+            notify('تعذر تغيير الـ Username، تأكد من الاتصال وحاول تاني.', 'warn');
+            return false;
         }
-    };
+    }
 
     // ================= الإيموجي والملصقات =================
     const segs = (s) => window.Intl?.Segmenter ? [...new Intl.Segmenter().segment(s)].map((x) => x.segment) : Array.from(s);
@@ -2523,7 +2569,7 @@
             clearReply();
             await afterSendBookkeeping('ملصق ' + s);
             toggleEmoji(false);
-        } catch (e) { console.error(e); alert('تعذر إرسال الملصق.'); }
+        } catch (e) { console.error(e); notify('تعذر إرسال الملصق.'); }
     }
 
     window.pickAttach = function (kind) {
@@ -2536,7 +2582,7 @@
     const lsList = (k) => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch (e) { return []; } };
     const isPinned = (id) => lsList('nexus_pins').includes(id) ? 1 : 0;
     const isMuted = (id) => lsList('nexus_mutes').includes(id);
-    const dispName = (c) => (isPinned(c.id) ? '📌 ' : '') + c.name + (isMuted(c.id) ? ' 🔕' : '');
+    const dispName = (c) => (isPinned(c.id) ? '📌 ' : '') + shownName(c) + (isMuted(c.id) ? ' 🔕' : '');
     function toggleInList(k) {
         const id = selectedChatForOptions;
         if (!id) return;
@@ -2604,7 +2650,7 @@
                 handleMediaUpload({ files: [new File(recChunks, `voice_${Date.now()}.${ext}`, { type })], value: '' });
             };
             rec.start(); btn.textContent = '⏹️'; btn.style.color = 'var(--danger)';
-        } catch (e) { alert('مش قادر أوصل للميكروفون. اسمح بالإذن وجرّب تاني.'); }
+        } catch (e) { notify('مش قادر أوصل للميكروفون. اسمح بالإذن وجرّب تاني.'); }
     };
 
     // ================= الكيبورد: شريط الكتابة يفضل ظاهر فوق الكيبورد (مهم للـ APK) =================
@@ -2715,8 +2761,10 @@
         const role = memSnap.exists() ? memSnap.val().role : null;
         const isMemAdmin = role === 'admin' || role === 'supervisor';
 
-        $('roomInputBoxContainer').style.display =
-            (grp.mode === 'admins_only' && !isMemAdmin && !isOwner()) ? 'none' : 'flex';
+        const locked = grp.mode === 'admins_only' && !isMemAdmin && !isOwner();
+        $('roomInputBoxContainer').style.display = locked ? 'none' : 'flex';
+        $('roomLockBar').style.display = locked ? 'block' : 'none';
+        if (locked) toggleEmoji(false);
         $('btnGroupSettingsOption').style.display = (isMemAdmin || isOwner()) ? 'block' : 'none';
     }
 
@@ -2729,7 +2777,7 @@
         await push(ref(db, 'group_reports'), {
             groupId: activeGroupId, groupName: grpSnap.val().name, reporter: savedNickname, time: new Date().toLocaleTimeString()
         });
-        alert('تم إرسال البلاغ عن الجروب للإدارة بنجاح!');
+        notify('تم إرسال البلاغ عن الجروب للإدارة بنجاح!');
     };
 
     window.openGroupMembersModal = async function () {
@@ -2758,8 +2806,8 @@
                 btns.push(h('button', { style: 'background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;', onclick: () => kickGroupMember(activeGroupId, mId) }, 'طرد'));
             }
             rows.push(h('div', { class: 'request-card' },
-                h('span', {}, `${mData.nickname} (`,
-                    h('span', { style: 'color:var(--accent); cursor:pointer;', onclick: () => copyToClipboard(mId, 'الـ ID') }, `${mId} 📋`),
+                h('span', {}, `${nickOf(mId, mData.nickname)} (`,
+                    h('span', { style: 'color:var(--accent); cursor:pointer;', onclick: () => copyToClipboard(mId, 'الـ Username') }, `${mId} 📋`),
                     `) (${roleLabel})`),
                 h('div', {}, btns)));
         }
@@ -2784,14 +2832,14 @@
 
     window.addSelectedFriendToGroup = async function () {
         const friendId = $('friendSelectForGroup').value;
-        if (!friendId) return alert('اختر صديقاً أولاً!');
+        if (!friendId) return notify('اختر صديقاً أولاً!');
         const uSnap = await get(ref(db, `users_directory/${friendId}`));
         const uName = uSnap.exists() ? uSnap.val().nickname : 'عضو';
         await update(ref(db), {
             [`group_members/${activeGroupId}/${friendId}`]: { role: 'member', nickname: uName },
             [`user_groups/${friendId}/${activeGroupId}`]: { timestamp: Date.now() }
         });
-        alert('تم إضافة العضو للجروب وظهوره لديه بنجاح!');
+        notify('تم إضافة العضو للجروب وظهوره لديه بنجاح!');
         openGroupMembersModal();
     };
 
@@ -2801,19 +2849,19 @@
             [`group_members/${groupId}/${memberId}`]: null,
             [`user_groups/${memberId}/${groupId}`]: null
         });
-        alert('تم طرد العضو.');
+        notify('تم طرد العضو.');
         openGroupMembersModal();
     };
 
     window.makeSupervisor = async function (groupId, memberId) {
         await set(ref(db, `group_members/${groupId}/${memberId}/role`), 'supervisor');
-        alert('تم تعيينه مشرفاً بنجاح!');
+        notify('تم تعيينه مشرفاً بنجاح!');
         openGroupMembersModal();
     };
 
     window.removeSupervisor = async function (groupId, memberId) {
         await set(ref(db, `group_members/${groupId}/${memberId}/role`), 'member');
-        alert('تم إزالة صلاحية الإشراف.');
+        notify('تم إزالة صلاحية الإشراف.');
         openGroupMembersModal();
     };
 
@@ -2838,7 +2886,7 @@
             updates.description = desc;
             const file = $('editGroupImageFile').files?.[0];
             if (file) {
-                if (!file.type.startsWith('image/')) return alert('الملف لازم يكون صورة!');
+                if (!file.type.startsWith('image/')) return notify('الملف لازم يكون صورة!');
                 updates.avatar = await resizeImage(file, 256, 0.85);
             }
             await update(ref(db, `groups/${activeGroupId}`), updates);
@@ -2850,15 +2898,228 @@
                 setAvatarContent($('roomAvatarBox'), updates.avatar, '👥');
                 $('roomAvatarBox').style.display = 'flex';
             }
-            alert('تم حفظ إعدادات الجروب بنجاح!');
+            notify(mode === 'admins_only' ? 'تم قفل الكتابة في الجروب' : 'تم فتح الكتابة للجميع');
             closeModal('groupSettingsModal');
             checkAdminPermissions(activeGroupId);
             loadGroupsList();
         } catch (e) {
             console.error(e);
-            alert('تعذر حفظ الإعدادات.');
+            notify('تعذر حفظ الإعدادات.');
         }
     };
+
+    // ================= التبويبات (شاتات / استوريات / أصدقاء / بروفايل) =================
+    let currentTab = 'chats';
+    window.showTab = function (t) {
+        const was = currentTab;
+        currentTab = t; window.__curTab = t;
+        const c = t === 'chats';
+        $('dashHeader').style.display = c ? '' : 'none';
+        $('dashSearch').style.display = c ? '' : 'none';
+        $('chatsListContainer').style.display = c ? '' : 'none';
+        $('pullToRefreshIndicator').style.display = c ? '' : 'none';
+        if (!c) $('searchResultsSection').style.display = 'none';
+        $('tabStories').style.display = t === 'stories' ? 'flex' : 'none';
+        $('tabFriends').style.display = t === 'friends' ? 'flex' : 'none';
+        $('tabProfile').style.display = t === 'profile' ? 'flex' : 'none';
+        document.querySelectorAll('#bottomNav .nav-btn[data-tab]').forEach((b) => b.classList.toggle('active', b.dataset.tab === t));
+        $('fabGroup').style.display = (c && $('mainDashboard').style.display !== 'none') ? 'block' : 'none';
+        if (c && was === 'chats') $('chatsListContainer').scrollTo({ top: 0, behavior: 'smooth' });
+        if (t === 'friends') { loadFriendsList(); loadBlockedList(); }
+        if (t === 'profile') renderMyProfile();
+    };
+
+    window.onSearchInput = function (v) {
+        searchQ = (v || '').trim().toLowerCase();
+        renderChatList();
+        searchUsersById(v);
+    };
+
+    // ================= Nickname (اسم بحطه أنا لصديق، بيظهر عندي بس) =================
+    let nickMap = {};
+    const nickOf = (uid, fallback) => (uid && nickMap[uid]) ? nickMap[uid] : fallback;
+    const shownName = (c) => (c.type === 'private' && !c.saved) ? nickOf(c.partnerId, c.name) : c.name;
+
+    async function loadNicknames() {
+        try {
+            const s = await get(ref(db, `nicknames/${myId}`));
+            nickMap = s.exists() ? s.val() : {};
+        } catch (e) { console.error(e); nickMap = {}; }
+    }
+
+    window.setNickname = async function (uid, val) {
+        val = String(val || '').trim().slice(0, 30);
+        try {
+            if (val) { await set(ref(db, `nicknames/${myId}/${uid}`), val); nickMap[uid] = val; }
+            else { await remove(ref(db, `nicknames/${myId}/${uid}`)); delete nickMap[uid]; }
+        } catch (e) { console.error(e); notify('تعذر حفظ الـ Nickname', 'warn'); return false; }
+        renderChatList();
+        if (friendsCache.length) renderFriends();
+        notify(val ? 'تم حفظ الـ Nickname' : 'رجع الاسم الأصلي');
+        return true;
+    };
+
+    // ================= نافذة تعديل حقل =================
+    let editCb = null;
+    function openEdit(o) {
+        $('editFieldTitle').textContent = o.title;
+        const inp = $('editFieldInput');
+        inp.type = o.type || 'text';
+        inp.value = o.value || '';
+        inp.placeholder = o.placeholder || '';
+        inp.maxLength = o.max || 60;
+        $('editFieldHint').textContent = o.hint || '';
+        editCb = o.onSave;
+        openModal('editFieldModal');
+        setTimeout(() => inp.focus(), 60);
+    }
+    window.saveEditField = async function () {
+        if (!editCb) return;
+        try {
+            const ok = await editCb($('editFieldInput').value.trim());
+            if (ok !== false) closeModal('editFieldModal');
+        } catch (e) { console.error(e); notify('تعذر الحفظ', 'warn'); }
+    };
+
+    // ================= صفحة البروفايل =================
+    let myUser = {};
+    function pfRow(icon, label, value, onTap, muted) {
+        const r = h('div', { class: 'pf-row' + (onTap ? ' tap' : '') },
+            h('div', { class: 'pf-ic' }, icon),
+            h('div', { class: 'pf-tx' }, h('small', {}, label), h('b', { class: muted ? 'muted' : '' }, value)),
+            onTap ? h('div', { class: 'pf-edit' }, '✎') : null);
+        if (onTap) r.addEventListener('click', onTap);
+        return r;
+    }
+
+    function profileTop(u, name, editable) {
+        const av = h('div', { class: 'avatar pf-avatar' });
+        setAvatarContent(av, u.avatar, firstChar(name));
+        const wrap = h('div', { class: 'pf-avwrap' }, av);
+        if (editable) wrap.appendChild(h('button', { class: 'pf-cam', title: 'تغيير الصورة', onclick: () => $('profileImageFile').click() }, '📷'));
+        return h('div', { class: 'pf-top' }, wrap, h('div', { class: 'pf-name' }, name),
+            h('div', { class: 'pf-sub' }, '‎@' + (u.handle || u.userId || myId)));
+    }
+
+    function renderMyProfile() {
+        const box = $('myProfileBody');
+        if (!box || !myId) return;
+        const u = { ...myUser, nickname: savedNickname, avatar: myAvatar, handle: myHandle || myUser.handle };
+        const linkTxt = u.link ? u.link.replace(/^https?:\/\//, '') : '';
+        box.replaceChildren(
+            profileTop(u, savedNickname || '', true),
+            h('div', { class: 'pf-card pf-list' },
+                pfRow('👤', 'الاسم', savedNickname || '', editNickname),
+                pfRow('ⓘ', 'النبذة', u.about || 'اكتب نبذة عنك', editAbout, !u.about),
+                pfRow('@', 'Username', u.handle || myId, editHandle),
+                pfRow('🔗', 'الروابط', linkTxt || 'أضف رابط', editLink, !linkTxt),
+                pfRow('🔑', 'كلمة السر', '••••••••', editPassword)),
+            h('div', { class: 'pf-btns' },
+                h('button', { class: 'main', onclick: copyMyId }, '📋 نسخ الـ Username'),
+                h('button', { onclick: () => openModal('settingsModal') }, '⚙️ الإعدادات')));
+    }
+
+    function editNickname() {
+        openEdit({ title: 'تغيير الاسم', value: savedNickname, max: 30, placeholder: 'اللقب الجديد', onSave: async (v) => {
+            if (!v) { notify('اكتب اللقب الجديد!'); return false; }
+            savedNickname = v;
+            localStorage.setItem('nexus_nickname', v);
+            await set(ref(db, `users_directory/${myId}/nickname`), v);
+            $('userBadge').textContent = v;
+            if (!myAvatar) setAvatarContent($('myHeaderAvatar'), '', firstChar(v));
+            renderMyProfile();
+            notify('تم تحديث اللقب');
+        } });
+    }
+    function editAbout() {
+        openEdit({ title: 'النبذة', value: myUser.about || '', max: 120, placeholder: 'اكتب نبذة عنك', hint: 'بتظهر للي يفتح بروفايلك.', onSave: async (v) => {
+            await set(ref(db, `users_directory/${myId}/about`), v || null);
+            myUser.about = v;
+            renderMyProfile();
+            notify(v ? 'تم حفظ النبذة' : 'تم مسح النبذة');
+        } });
+    }
+    function editLink() {
+        openEdit({ title: 'الرابط', value: myUser.link || '', max: 200, placeholder: 'https://...', hint: 'مثلاً رابط إنستجرام. سيبه فاضي لو عايز تمسحه.', onSave: async (v) => {
+            if (v && !/^https?:\/\//i.test(v)) v = 'https://' + v;
+            if (v && !/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(v)) { notify('الرابط غير صالح!'); return false; }
+            await set(ref(db, `users_directory/${myId}/link`), v || null);
+            myUser.link = v;
+            renderMyProfile();
+            notify(v ? 'تم حفظ الرابط' : 'تم مسح الرابط');
+        } });
+    }
+    function editHandle() {
+        openEdit({ title: 'تغيير الـ Username', value: myHandle || '', max: 20, placeholder: 'username', hint: 'إنجليزي صغير وأرقام و _ ، من 4 لـ 20.', onSave: (v) => changeMyHandle(v) });
+    }
+    function editPassword() {
+        openEdit({ title: 'تغيير كلمة السر', type: 'password', value: '', max: 60, placeholder: 'كلمة السر الجديدة', hint: '4 أحرف على الأقل.', onSave: async (v) => {
+            if (v.length < 4) { notify('كلمة السر لازم تكون 4 أحرف على الأقل!'); return false; }
+            try {
+                await update(ref(db, `users_directory/${myId}`), { passHash: await hashPassword(v, myId), password: null });
+            } catch (e) { notify(e.message === 'no-subtle' ? NO_CRYPTO_MSG : 'تعذر تحديث كلمة السر.', 'warn'); return false; }
+            notify('تم تحديث كلمة السر');
+        } });
+    }
+
+    window.uploadProfileImage = async function () {
+        const inp = $('profileImageFile');
+        const file = inp.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) { inp.value = ''; return notify('الملف لازم يكون صورة!'); }
+        try {
+            myAvatar = await resizeImage(file, 256, 0.85);
+            await set(ref(db, `users_directory/${myId}/avatar`), myAvatar);
+            setAvatarContent($('myHeaderAvatar'), myAvatar, firstChar(savedNickname));
+            myUser.avatar = myAvatar;
+            renderMyProfile();
+            notify('تم تحديث صورة البروفايل');
+            loadAcceptedChats();
+        } catch (e) {
+            console.error(e);
+            notify('تعذر رفع الصورة.', 'warn');
+        }
+        inp.value = '';
+    };
+
+    // ---------- بروفايل شخص تاني ----------
+    window.closeOtherProfile = function () { $('otherProfileView').style.display = 'none'; };
+
+    window.openUserProfile = async function (uid) {
+        if (!uid) return;
+        if (uid === myId) { closeOtherProfile(); showTab('profile'); return; }
+        $('otherProfileView').style.display = 'flex';
+        $('opTitle').textContent = 'البروفايل';
+        $('opBody').replaceChildren(h('div', { class: 'no-results' }, 'جاري التحميل...'));
+        try {
+            const [us, fr] = await Promise.all([get(ref(db, `users_directory/${uid}`)), get(ref(db, `friends/${myId}/${uid}`))]);
+            if (!us.exists()) { $('opBody').replaceChildren(h('div', { class: 'no-results' }, 'المستخدم غير موجود.')); return; }
+            renderOtherProfile(us.val(), fr.exists());
+        } catch (e) {
+            console.error(e);
+            $('opBody').replaceChildren(h('div', { class: 'no-results' }, 'تعذر تحميل البروفايل.'));
+        }
+    };
+
+    function renderOtherProfile(u, isFriend) {
+        const uid = u.userId;
+        const name = nickOf(uid, u.nickname);
+        $('opTitle').textContent = name;
+        const rows = [];
+        if (nickMap[uid]) rows.push(pfRow('👤', 'اسمه الأصلي', u.nickname, null));
+        rows.push(pfRow('✏️', 'Nickname (عندك إنت بس)', nickMap[uid] || 'لم تحدد اسم', () => openEdit({
+            title: 'Nickname', value: nickMap[uid] || '', max: 30, placeholder: u.nickname,
+            hint: 'الاسم ده بيحل محل لقبه عندك بس، وهو مش هيعرف. سيبه فاضي لو عايز ترجع الاسم الأصلي.',
+            onSave: async (v) => { const ok = await setNickname(uid, v); if (ok) renderOtherProfile(u, isFriend); return ok; }
+        }), !nickMap[uid]));
+        rows.push(pfRow('ⓘ', 'النبذة', u.about || 'لا توجد نبذة', null, !u.about));
+        rows.push(pfRow('@', 'Username', u.handle || uid, () => copyToClipboard(u.handle || uid, 'الـ Username')));
+        if (u.link) rows.push(pfRow('🔗', 'الروابط', u.link.replace(/^https?:\/\//, ''), () => { if (/^https?:\/\//i.test(u.link)) window.open(u.link, '_blank', 'noopener'); }));
+        const btns = [h('button', { class: 'main', onclick: () => { closeOtherProfile(); startDirectChat(uid, name); } }, '💬 مراسلة')];
+        if (isFriend) btns.push(h('button', { class: 'danger', onclick: async () => { await removeFriend(uid, name); closeOtherProfile(); } }, '🗑️ حذف صديق'));
+        else btns.push(h('button', { onclick: () => sendMsgReq(uid) }, '➕ إرسال طلب'));
+        $('opBody').replaceChildren(profileTop(u, name, false), h('div', { class: 'pf-card pf-list' }, ...rows), h('div', { class: 'pf-btns' }, ...btns));
+    }
 
     // ================= التشغيل التلقائي =================
     renderSwatches();
