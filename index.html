@@ -1907,7 +1907,7 @@
         loadAcceptedChats();
         loadGroupsList();
     };
-    $('btnSendRoomMsg').onclick = sendRoomMessage;
+    $('btnSendRoomMsg').onclick = sendRoomMessage; $('btnSendRoomMsg').addEventListener('mousedown', (e) => e.preventDefault()); /* منع فقدان التركيز: الضغطة الأولى كانت بتضيع */
 
     window.openRoom = async function (roomId, roomName, type, partnerId = null) {
         stopRoomListeners();
